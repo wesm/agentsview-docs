@@ -1,0 +1,72 @@
+---
+title: Quick Start
+description: Get agentsview running in under a minute
+---
+
+## Install
+
+Build from source (requires Go 1.25+ with CGO):
+
+```bash
+CGO_ENABLED=1 go install -tags fts5 \
+  github.com/wesm/agentsview/cmd/agentsview@latest
+```
+
+Or clone and build:
+
+```bash
+git clone https://github.com/wesm/agentsview.git
+cd agentsview
+make build
+make install  # installs to ~/.local/bin
+```
+
+:::note
+CGO is required for the SQLite driver. The `fts5` build tag
+enables full-text search.
+:::
+
+## Run
+
+Start the server:
+
+```bash
+agentsview
+```
+
+This will:
+
+1. Initialize the SQLite database at `~/.agentsview/sessions.db`
+2. Discover and sync sessions from Claude Code, Codex, and Gemini CLI
+3. Start watching session directories for changes
+4. Launch the web UI at `http://127.0.0.1:8080`
+5. Open your browser automatically
+
+## Customize
+
+Override the default port or host:
+
+```bash
+agentsview -port 9090
+agentsview -host 0.0.0.0 -port 3000
+agentsview -no-browser
+```
+
+Point to custom session directories with environment variables:
+
+```bash
+export CLAUDE_PROJECTS_DIR=~/custom/claude/projects
+export CODEX_SESSIONS_DIR=~/custom/codex/sessions
+export GEMINI_DIR=~/custom/gemini
+agentsview
+```
+
+## What You'll See
+
+Once running, the web UI provides:
+
+- **Session list** with filtering by project, agent, date, and message count
+- **Message viewer** with full content, tool calls, and thinking blocks
+- **Full-text search** across all message content
+- **Analytics** including activity heatmaps, tool usage, and velocity charts
+- **Session export** to standalone HTML or GitHub Gist

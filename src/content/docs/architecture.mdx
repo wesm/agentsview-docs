@@ -1,0 +1,130 @@
+---
+title: Architecture
+description: How agentsview discovers, parses, stores, and serves session data
+---
+
+## Overview
+
+agentsview is a single Go binary that embeds a Svelte 5
+frontend. It syncs AI agent session files from disk into
+SQLite, indexes them for full-text search, and serves
+everything over HTTP.
+
+```
+~/.claude/projects/   ─┐
+~/.codex/sessions/    ─┼─▶  Sync Engine  ─▶  SQLite + FTS5
+~/.gemini/            ─┘       │                    │
+                          File Watcher         HTTP Server
+                                                    │
+                                          REST API + SSE + SPA
+```
+
+## Session Parsing
+
+Each agent writes sessions in a different JSONL format.
+agentsview includes a dedicated parser for each:
+
+| Agent | Parser | Source Format |
+|-------|--------|---------------|
+| Claude Code | `parser/claude.go` | Project-scoped JSONL with tool use blocks |
+| Codex | `parser/codex.go` | Session JSONL with function calls |
+| Gemini CLI | `parser/gemini.go` | Session JSONL from temp directory |
+
+Parsers extract a common structure:
+
+- **Sessions** — ID, project, agent type, timestamps
+- **Messages** — role (user/assistant), content, ordinal
+- **Tool calls** — raw tool name plus a normalized category
+
+### Tool Taxonomy
+
+Tool names from different agents are normalized into
+categories for cross-agent analytics:
+
+| Category | Examples |
+|----------|---------|
+| Read | Read, View, cat, file_read |
+| Edit | Edit, Replace, patch |
+| Write | Write, CreateFile |
+| Bash | Bash, execute, shell |
+| Search | Grep, Glob, find, ripgrep |
+| Web | WebFetch, WebSearch, browse |
+| Task | Task, Agent, spawn |
+
+## Storage
+
+SQLite with WAL mode serves as the single data store.
+
+**Key design choices:**
+
+- **FTS5 virtual table** on message content with Porter
+  stemming and Unicode 6.1 tokenization
+- **Auto-maintained triggers** keep the FTS index in sync
+  with inserts, updates, and deletes
+- **Content hashing** for change detection — files are only
+  re-parsed when their content actually changes
+- **Aggregate stats table** tracks session and message counts
+  without full table scans
+
+### Schema
+
+The database has five tables:
+
+| Table | Primary Key | Purpose |
+|-------|-------------|---------|
+| `sessions` | `id` (text) | Session metadata and file info |
+| `messages` | `id` (integer) | Message content and metadata |
+| `tool_calls` | `id` (integer) | Tool invocations per message |
+| `stats` | — | Aggregate counters |
+| `messages_fts` | — | FTS5 full-text search index |
+
+Indexes cover the common query patterns: session listing by
+date, message retrieval by session, analytics by timestamp,
+and tool analysis by category.
+
+## Sync Engine
+
+The sync engine coordinates file discovery and processing:
+
+1. **Discovery** — scans configured directories for session
+   files matching each agent's expected path patterns
+2. **Hashing** — computes content hashes to detect changes
+3. **Worker pool** — 8 concurrent goroutines parse and insert
+   changed files
+4. **Failed file tracking** — files that fail to parse are
+   remembered and retried when their mtime changes
+
+Two sync triggers run concurrently:
+
+- **File watcher** (fsnotify) — reacts to file system events
+  with 500ms debounce to batch rapid changes
+- **Periodic timer** — full directory scan every 15 minutes
+  as a safety net for missed events
+
+## HTTP Server
+
+The server exposes three interfaces:
+
+1. **REST API** (`/api/v1/`) — JSON endpoints for sessions,
+   search, analytics, sync control, and configuration
+2. **SSE** (`/api/v1/sessions/{id}/watch`) — real-time
+   session updates via Server-Sent Events
+3. **SPA** (`/`) — the Svelte 5 frontend, embedded in the
+   binary at build time via `embed.FS`
+
+The server uses CORS middleware and request logging. Pagination
+is cursor-based with HMAC-signed cursors for tamper resistance.
+
+## Frontend
+
+The Svelte 5 SPA is built with Vite and embedded into the Go
+binary. It provides:
+
+- **Three-column layout** — sidebar session list, message
+  content, and session detail panel
+- **Session browser** — filtering, sorting, and infinite scroll
+- **Message renderer** — code blocks, thinking blocks, and
+  tool call visualization
+- **Search** — full-text search with result highlighting
+- **Analytics** — interactive charts and heatmaps
+- **Export** — HTML export and GitHub Gist publishing

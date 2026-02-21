@@ -1,0 +1,105 @@
+---
+title: Configuration
+description: Config file, default paths, and runtime settings
+---
+
+## Data Directory
+
+agentsview stores all persistent data under a single directory,
+defaulting to `~/.agentsview/`. Override with the
+`AGENT_VIEWER_DATA_DIR` environment variable.
+
+```
+~/.agentsview/
+├── sessions.db     # SQLite database (WAL mode)
+├── config.json     # Configuration file
+└── uploads/        # Uploaded session files
+```
+
+## Config File
+
+The config file at `~/.agentsview/config.json` is auto-created
+on first run. It stores persistent settings that survive restarts.
+
+```json
+{
+  "cursor_secret": "base64-encoded-secret",
+  "github_token": "ghp_xxxxx"
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `cursor_secret` | Auto-generated HMAC key for pagination cursor signing |
+| `github_token` | GitHub personal access token for Gist publishing |
+
+The `cursor_secret` is generated automatically on first run.
+The `github_token` can be set via the web UI settings or the
+API endpoint `POST /api/v1/config/github`.
+
+## Session Discovery
+
+agentsview auto-discovers session files from three agent types:
+
+| Agent | Default Directory | File Format |
+|-------|-------------------|-------------|
+| Claude Code | `~/.claude/projects/` | JSONL per session |
+| Codex | `~/.codex/sessions/` | JSONL per session |
+| Gemini CLI | `~/.gemini/` | JSONL in `tmp/` subdirectory |
+
+Override any of these with environment variables:
+
+```bash
+export CLAUDE_PROJECTS_DIR=~/custom/claude
+export CODEX_SESSIONS_DIR=~/custom/codex
+export GEMINI_DIR=~/custom/gemini
+```
+
+## Database
+
+The SQLite database uses WAL mode for concurrent reads and
+includes FTS5 full-text search indexes on message content.
+
+**Schema tables:**
+
+| Table | Purpose |
+|-------|---------|
+| `sessions` | Session metadata (project, agent, timestamps, file info) |
+| `messages` | Message content with role, ordinal, timestamps |
+| `tool_calls` | Tool invocations with normalized category taxonomy |
+| `stats` | Aggregate counts (session_count, message_count) |
+| `messages_fts` | FTS5 virtual table for full-text search |
+
+The database is automatically migrated on startup when the
+schema changes.
+
+## Sync Behavior
+
+agentsview keeps the database in sync with session files through
+two mechanisms:
+
+1. **File watcher** — uses fsnotify to detect file changes
+   in real time (500ms debounce)
+2. **Periodic sync** — full directory scan every 15 minutes
+   as a safety net
+
+Change detection uses file content hashing (not just mtime)
+to avoid unnecessary re-parsing. A pool of 8 workers processes
+files in parallel during sync.
+
+Files that fail to parse are tracked and retried when their
+mtime changes.
+
+## Manual Sync
+
+Trigger a sync from the API:
+
+```bash
+curl -X POST http://127.0.0.1:8080/api/v1/sync
+```
+
+Check sync status:
+
+```bash
+curl http://127.0.0.1:8080/api/v1/sync/status
+```

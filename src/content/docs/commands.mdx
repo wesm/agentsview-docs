@@ -1,0 +1,120 @@
+---
+title: CLI Reference
+description: All agentsview commands, flags, and environment variables
+---
+
+## Commands
+
+### `agentsview` / `agentsview serve`
+
+Start the HTTP server with embedded web UI.
+
+```bash
+agentsview [flags]
+agentsview serve [flags]
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-host` | `127.0.0.1` | Host to bind to |
+| `-port` | `8080` | Port to listen on |
+| `-no-browser` | `false` | Don't open browser on startup |
+
+The server auto-discovers an available port if `8080` is busy.
+
+**Examples:**
+
+```bash
+agentsview                          # defaults
+agentsview -port 9090               # custom port
+agentsview -host 0.0.0.0            # bind to all interfaces
+agentsview -host 0.0.0.0 -no-browser  # headless mode
+```
+
+On startup, the server:
+
+1. Loads or creates `~/.agentsview/sessions.db`
+2. Runs initial sync across all discovered session directories
+3. Starts the file watcher (500ms debounce)
+4. Starts periodic sync (every 15 minutes)
+5. Serves the Svelte SPA and REST API
+
+---
+
+### `agentsview prune`
+
+Delete sessions matching one or more filters. At least one filter
+is required.
+
+```bash
+agentsview prune [flags]
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-project` | | Sessions whose project contains this substring |
+| `-max-messages` | `-1` | Sessions with at most N messages |
+| `-before` | | Sessions that ended before this date (`YYYY-MM-DD`) |
+| `-first-message` | | Sessions whose first message starts with this text |
+| `-dry-run` | `false` | Show what would be pruned without deleting |
+| `-yes` | `false` | Skip confirmation prompt |
+
+**Examples:**
+
+```bash
+# Preview what would be deleted
+agentsview prune -project "scratch" -dry-run
+
+# Delete short sessions from before 2025
+agentsview prune -max-messages 2 -before 2025-01-01
+
+# Delete sessions starting with a specific message
+agentsview prune -first-message "test" -yes
+
+# Combine filters (AND logic)
+agentsview prune -project "old-project" -max-messages 5 -before 2025-06-01
+```
+
+The prune command displays the number of sessions deleted and
+disk space reclaimed. Use `-dry-run` first to verify the filter
+matches what you expect.
+
+---
+
+### `agentsview version`
+
+Print the version, git commit, and build date.
+
+```bash
+agentsview version
+```
+
+```
+agentsview v0.1.0 (abc1234) built 2025-01-15
+```
+
+---
+
+### `agentsview help`
+
+Print usage information.
+
+```bash
+agentsview help
+```
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CLAUDE_PROJECTS_DIR` | `~/.claude/projects` | Claude Code projects directory |
+| `CODEX_SESSIONS_DIR` | `~/.codex/sessions` | Codex sessions directory |
+| `GEMINI_DIR` | `~/.gemini` | Gemini CLI directory |
+| `AGENT_VIEWER_DATA_DIR` | `~/.agentsview` | Data directory (database, config) |
+
+Environment variables override the built-in defaults. Set them
+in your shell profile or pass them inline:
+
+```bash
+AGENT_VIEWER_DATA_DIR=/tmp/av-test agentsview
+```

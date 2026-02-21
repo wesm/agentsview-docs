@@ -1,0 +1,94 @@
+---
+title: agentsview
+description: Local web viewer and analytics for AI agent sessions
+hero:
+  tagline: Browse, search, and analyze your AI agent sessions. A local analytics dashboard for Claude Code, Codex, and Gemini CLI.
+  actions:
+    - text: Get Started
+      link: /quickstart/
+      icon: right-arrow
+    - text: API Reference
+      link: /api/
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<div class="agent-badges">
+  <span>Claude Code</span>
+  <span>Codex</span>
+  <span>Gemini CLI</span>
+</div>
+
+## Quick Start
+
+```bash
+go install github.com/wesm/agentsview/cmd/agentsview@latest
+```
+
+```bash
+agentsview              # Start server, open browser
+agentsview -port 9090   # Custom port
+agentsview -no-browser  # Start without opening browser
+```
+
+## Features
+
+<CardGrid stagger>
+  <Card title="Multi-Agent Support" icon="rocket">
+    Parses and displays sessions from Claude Code, Codex,
+    and Gemini CLI. Auto-discovers session directories.
+  </Card>
+  <Card title="Full-Text Search" icon="magnifier">
+    FTS5-powered search with Porter stemming across all
+    message content. Phrase search, project filtering,
+    and cursor-based pagination.
+  </Card>
+  <Card title="Analytics Dashboard" icon="document">
+    Activity heatmaps, tool usage breakdowns, velocity
+    tracking, per-project stats, and session distribution
+    charts. Timezone-aware date ranges.
+  </Card>
+  <Card title="Real-Time Monitoring" icon="setting">
+    Server-Sent Events stream live session updates.
+    File watcher detects new and modified sessions
+    automatically.
+  </Card>
+  <Card title="Session Management" icon="pencil">
+    Export sessions as standalone HTML. Publish to GitHub
+    Gist. Prune old sessions by project, date, or message
+    count.
+  </Card>
+  <Card title="Runs Locally" icon="laptop">
+    SQLite with WAL mode. Embedded Svelte 5 frontend.
+    No cloud services, no accounts. Your data stays on
+    your machine.
+  </Card>
+</CardGrid>
+
+## How It Works
+
+<div class="arch-diagram">
+<strong>Session Files</strong> (Claude, Codex, Gemini)
+        │
+        ▼
+<strong>File Watcher</strong> ──▶ <strong>Sync Engine</strong> (8 workers)
+        │                    │
+        │              parse JSONL
+        │                    │
+        ▼                    ▼
+<strong>SQLite + FTS5</strong> ◀── sessions, messages, tool_calls
+        │
+        ▼
+<strong>HTTP Server</strong> ──▶ REST API + SSE
+        │
+        ▼
+<strong>Svelte 5 SPA</strong> (embedded in binary)
+</div>
+
+agentsview watches your agent session directories for changes,
+parses JSONL files from each agent format, and stores structured
+data in SQLite with full-text search indexes. The embedded web
+frontend provides browsing, search, and analytics over the
+REST API.

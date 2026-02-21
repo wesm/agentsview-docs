@@ -1,0 +1,283 @@
+---
+title: API Reference
+description: REST API endpoints for sessions, search, and analytics
+---
+
+All endpoints are under the `/api/v1/` prefix. The server
+returns JSON responses with appropriate HTTP status codes.
+
+## Sessions
+
+### List Sessions
+
+```
+GET /api/v1/sessions
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `limit` | int | Max results per page |
+| `cursor` | string | Pagination cursor from previous response |
+| `min_messages` | int | Minimum message count filter |
+| `max_messages` | int | Maximum message count filter |
+| `date` | string | Exact date filter (`YYYY-MM-DD`) |
+| `date_from` | string | Start date (inclusive) |
+| `date_to` | string | End date (inclusive) |
+| `project` | string | Project name filter |
+| `machine` | string | Machine name filter |
+| `agent` | string | Agent type: `claude`, `codex`, `gemini` |
+
+Returns paginated results with a `next_cursor` field for the
+next page.
+
+### Get Session
+
+```
+GET /api/v1/sessions/{id}
+```
+
+Returns session metadata: project, agent, timestamps, message
+count, and file information.
+
+### Get Messages
+
+```
+GET /api/v1/sessions/{id}/messages
+```
+
+Returns all messages in the session, ordered by ordinal.
+Each message includes role, content, timestamp, and flags
+for thinking blocks and tool use.
+
+### Session Minimap
+
+```
+GET /api/v1/sessions/{id}/minimap
+```
+
+Returns a compact structural summary of the session for UI
+visualization (message counts, role distribution, tool usage).
+
+### Watch Session (SSE)
+
+```
+GET /api/v1/sessions/{id}/watch
+```
+
+Server-Sent Events stream that pushes updates when new messages
+are added to an active session. Connect with an `EventSource`
+client.
+
+### Export Session
+
+```
+POST /api/v1/sessions/{id}/export
+```
+
+Returns the session as a standalone HTML document with styled
+message rendering.
+
+### Publish to Gist
+
+```
+POST /api/v1/sessions/{id}/publish
+```
+
+Publishes the session to a GitHub Gist. Requires a GitHub
+token configured via `/api/v1/config/github`.
+
+### Upload Session
+
+```
+POST /api/v1/sessions/upload
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `project` | string | Project name (query param, optional) |
+| `machine` | string | Machine name (query param, default: `remote`) |
+| `file` | file | Multipart form field, `.jsonl` only |
+
+Upload a session JSONL file from another machine.
+
+---
+
+## Search
+
+### Full-Text Search
+
+```
+GET /api/v1/search
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `q` | string | Search query (required) |
+| `project` | string | Filter by project |
+| `limit` | int | Max results per page |
+| `cursor` | string | Pagination cursor |
+
+Uses FTS5 with Porter stemming. Multi-word queries are
+automatically treated as phrase searches. Results include
+matching message snippets with context.
+
+---
+
+## Analytics
+
+All analytics endpoints accept these common parameters:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `from` | string | 30 days ago | Start date (`YYYY-MM-DD`) |
+| `to` | string | today | End date (`YYYY-MM-DD`) |
+| `timezone` | string | `UTC` | IANA timezone name |
+| `machine` | string | | Filter by machine |
+
+### Summary
+
+```
+GET /api/v1/analytics/summary
+```
+
+Overview stats: session count, message count, time period.
+
+### Activity
+
+```
+GET /api/v1/analytics/activity
+```
+
+Sessions and messages per day over the date range.
+
+### Heatmap
+
+```
+GET /api/v1/analytics/heatmap
+```
+
+Activity counts by hour of day (0-23).
+
+### Hour of Week
+
+```
+GET /api/v1/analytics/hour-of-week
+```
+
+Activity grid by day of week and hour of day.
+
+### Session Distribution
+
+```
+GET /api/v1/analytics/sessions
+```
+
+Distribution of sessions by message count (histogram).
+
+### Velocity
+
+```
+GET /api/v1/analytics/velocity
+```
+
+Messages per session trend over time.
+
+### Projects
+
+```
+GET /api/v1/analytics/projects
+```
+
+Activity breakdown by project name.
+
+### Tool Usage
+
+```
+GET /api/v1/analytics/tools
+```
+
+Tool invocation counts grouped by normalized category
+(Read, Edit, Write, Bash, etc.).
+
+---
+
+## Listings
+
+### Projects
+
+```
+GET /api/v1/projects
+```
+
+List all project names in the database.
+
+### Machines
+
+```
+GET /api/v1/machines
+```
+
+List all machine names.
+
+### Global Stats
+
+```
+GET /api/v1/stats
+```
+
+Returns total session count, message count, and last sync
+timestamp.
+
+### Version
+
+```
+GET /api/v1/version
+```
+
+Returns server version, git commit hash, and build date.
+
+---
+
+## Sync
+
+### Trigger Sync
+
+```
+POST /api/v1/sync
+```
+
+Trigger a manual sync of all session directories.
+
+### Sync Status
+
+```
+GET /api/v1/sync/status
+```
+
+Returns last sync time and statistics.
+
+---
+
+## Configuration
+
+### GitHub Token Status
+
+```
+GET /api/v1/config/github
+```
+
+Returns whether a GitHub token is configured (does not
+return the token itself).
+
+### Set GitHub Token
+
+```
+POST /api/v1/config/github
+```
+
+```json
+{ "token": "ghp_xxxxx" }
+```
+
+Saves a GitHub personal access token for Gist publishing.
+The token is persisted to the config file.
