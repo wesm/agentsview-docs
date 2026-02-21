@@ -97,22 +97,14 @@ test.describe('Dashboard', () => {
   });
 
   test('heatmap click-to-filter', async ({ page }) => {
-    // Click a heatmap cell to show the filtering behavior
-    const cells = page.locator('rect[data-date]');
-    if (await cells.count() > 0) {
-      // Find a cell with data (non-zero)
-      for (let i = 0; i < await cells.count(); i++) {
-        const fill = await cells.nth(i).getAttribute('fill');
-        // Skip cells with no activity (level 0 / transparent)
-        if (fill && fill !== 'transparent' && !fill.includes('0.0')) {
-          await cells.nth(i).click();
-          await page.waitForTimeout(1500);
-          break;
-        }
-      }
+    // Click a cell with data (has .clickable class)
+    const clickable = page.locator('.heatmap-cell.clickable');
+    if (await clickable.count() > 0) {
+      await clickable.first().click();
+      await page.waitForTimeout(2000);
       await snap(page, 'heatmap-filtered');
       // Click again to deselect
-      const selected = page.locator('rect[data-date].selected, rect[data-date][stroke]');
+      const selected = page.locator('.heatmap-cell.selected');
       if (await selected.count() > 0) {
         await selected.first().click();
         await page.waitForTimeout(500);
@@ -133,14 +125,17 @@ test.describe('Dashboard', () => {
   });
 
   test('activity timeline', async ({ page }) => {
-    const panels = page.locator('.chart-panel');
-    const count = await panels.count();
-    for (let i = 0; i < count; i++) {
-      const text = await panels.nth(i).textContent();
-      if (text && text.includes('Timeline')) {
-        await snapEl(panels.nth(i), 'activity-timeline');
-        break;
+    // ActivityTimeline is the 3rd chart-panel (index 2)
+    const panel = page.locator('.chart-panel').nth(2);
+    if (await panel.count() > 0) {
+      const timeline = panel.locator('.timeline-container');
+      if (await timeline.count() > 0) {
+        await page.waitForSelector('.timeline-svg', {
+          timeout: 10_000,
+        });
+        await page.waitForTimeout(500);
       }
+      await snapEl(panel, 'activity-timeline');
     }
   });
 
@@ -307,33 +302,22 @@ test.describe('Message viewer', () => {
 
   test('thinking blocks', async ({ page }) => {
     await selectRichSession(page);
-
-    // Enable thinking blocks
-    await page.keyboard.press('t');
+    // showThinking defaults to true — don't press 't'
     await page.waitForTimeout(500);
 
-    // Look for a thinking block
+    // Look for a thinking block already visible
     const thinking = page.locator('.thinking-block').first();
     if (await thinking.isVisible()) {
-      // Expand it by clicking the header
-      const header = thinking.locator('.thinking-header');
-      if (await header.count() > 0) {
-        await header.click();
-        await page.waitForTimeout(300);
-      }
       await snapEl(thinking, 'thinking-blocks');
     } else {
-      // Scroll through messages to find one with thinking
-      const messages = page.locator('.message');
-      const count = await messages.count();
-      for (let i = 0; i < Math.min(count, 20); i++) {
-        await messages.nth(i).scrollIntoViewIfNeeded();
-        await page.waitForTimeout(200);
+      // Scroll through messages to find one
+      const rows = page.locator('.message, .virtual-row');
+      const count = await rows.count();
+      for (let i = 0; i < Math.min(count, 40); i++) {
+        await rows.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(150);
         const tb = page.locator('.thinking-block').first();
         if (await tb.isVisible()) {
-          const hdr = tb.locator('.thinking-header');
-          if (await hdr.count() > 0) await hdr.click();
-          await page.waitForTimeout(300);
           await snapEl(tb, 'thinking-blocks');
           break;
         }
