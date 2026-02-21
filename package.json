@@ -8,15 +8,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "screenshots": "./scripts/capture-screenshots.sh",
-    "create-test-db": "./scripts/create-test-db.sh"
+    "screenshots": "./screenshots/run.sh"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.32.0",
     "astro": "^5.1.0",
     "sharp": "^0.33.0"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.52.0"
   }
 }

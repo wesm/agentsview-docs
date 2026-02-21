@@ -15,7 +15,7 @@ When you open agentsview with no session selected, you see the
 analytics dashboard. It provides a high-level overview of your
 agent activity across all projects.
 
-{/* ![Analytics dashboard](/screenshots/dashboard.png) */}
+![Analytics dashboard](/screenshots/dashboard.png)
 
 The dashboard header includes:
 
@@ -34,7 +34,7 @@ project count, last sync time, and the build version.
 Six cards at the top of the dashboard show key metrics for the
 selected date range:
 
-{/* ![Summary cards](/screenshots/summary-cards.png) */}
+![Summary cards](/screenshots/summary-cards.png)
 
 | Card | Description |
 |------|-------------|
@@ -51,15 +51,23 @@ Quick presets for 7 days, 30 days, 90 days, and 1 year, plus
 custom start/end date inputs. All charts update when the range
 changes.
 
-{/* ![Date range picker](/screenshots/date-range.png) */}
+![Date range picker](/screenshots/date-range.png)
 
 ### Activity Heatmap
 
 A GitHub-style contribution graph showing daily activity. Toggle
-between message count and session count. Click any cell to filter
-all other charts to that single day.
+between message count and session count.
 
-{/* ![Activity heatmap](/screenshots/heatmap.png) */}
+![Activity heatmap](/screenshots/heatmap.png)
+
+#### Click-to-Filter
+
+Click any heatmap cell to filter all charts and the session list
+to that single day. The selected cell gets a highlighted border,
+and an active filter chip appears in the toolbar. Click the same
+cell again (or dismiss the filter chip) to deselect.
+
+![Heatmap filtered to a single day](/screenshots/heatmap-filtered.png)
 
 ### Hour of Week Heatmap
 
@@ -67,7 +75,7 @@ A 7x24 grid showing when you use agents most. Rows are days of
 the week, columns are hours. Color intensity represents message
 volume.
 
-{/* ![Hour of week heatmap](/screenshots/hour-of-week.png) */}
+![Hour of week heatmap](/screenshots/hour-of-week.png)
 
 ### Activity Timeline
 
@@ -75,7 +83,7 @@ A stacked chart showing messages, sessions, tool calls, and
 thinking blocks over time. Toggle between daily, weekly, and
 monthly granularity. Includes breakdown by agent.
 
-{/* ![Activity timeline](/screenshots/activity-timeline.png) */}
+![Activity timeline](/screenshots/activity-timeline.png)
 
 ### Top Sessions
 
@@ -83,14 +91,16 @@ A ranked list of your longest sessions by message count or
 duration. Click any session to jump directly to it in the
 session viewer.
 
-{/* ![Top sessions](/screenshots/top-sessions.png) */}
+![Top sessions](/screenshots/top-sessions.png)
 
 ### Project Breakdown
 
 Bar chart of all projects sorted by session or message count.
 Shows average and median messages per session for each project.
+Click any project bar to filter the dashboard and session list
+to that project.
 
-{/* ![Project breakdown](/screenshots/project-breakdown.png) */}
+![Project breakdown](/screenshots/project-breakdown.png)
 
 ### Session Shape Distribution
 
@@ -100,7 +110,7 @@ Three histograms showing the distribution of:
 2. **Session duration** — time in minutes
 3. **Session autonomy** — ratio of tool calls to conversation turns
 
-{/* ![Session shape](/screenshots/session-shape.png) */}
+![Session shape](/screenshots/session-shape.png)
 
 ### Tool Usage
 
@@ -108,7 +118,7 @@ Total tool call count with breakdowns by category (Read, Edit,
 Write, Bash, Search, Web, Task) and by agent. Includes a trend
 chart showing tool usage over time.
 
-{/* ![Tool usage](/screenshots/tool-usage.png) */}
+![Tool usage](/screenshots/tool-usage.png)
 
 ### Velocity Metrics
 
@@ -119,7 +129,7 @@ Performance metrics including:
 - Messages, characters, and tool calls per active minute
 - Breakdown by agent and by session complexity
 
-{/* ![Velocity metrics](/screenshots/velocity.png) */}
+![Velocity metrics](/screenshots/velocity.png)
 
 ### Agent Comparison
 
@@ -127,7 +137,7 @@ Side-by-side metrics across agents: session count, total
 messages, average response time, tool usage patterns, and
 concentration metrics.
 
-{/* ![Agent comparison](/screenshots/agent-comparison.png) */}
+![Agent comparison](/screenshots/agent-comparison.png)
 
 ### CSV Export
 
@@ -142,7 +152,7 @@ projects, tools, and velocity sections.
 The left sidebar lists all sessions with virtual scrolling for
 smooth performance even with thousands of sessions.
 
-{/* ![Session list](/screenshots/session-list.png) */}
+![Session list](/screenshots/session-list.png)
 
 Each session item shows:
 
@@ -179,7 +189,7 @@ Selecting a session opens the message viewer in the main content
 area. Messages display in a scrollable list with virtual
 rendering for large sessions.
 
-{/* ![Message viewer](/screenshots/message-viewer.png) */}
+![Message viewer](/screenshots/message-viewer.png)
 
 ### Message Display
 
@@ -198,7 +208,7 @@ Assistant thinking blocks appear as collapsible sections with a
 purple left border. Toggle visibility for all thinking blocks
 with the `t` key or the thinking button in the header.
 
-{/* ![Thinking blocks](/screenshots/thinking-blocks.png) */}
+![Thinking blocks](/screenshots/thinking-blocks.png)
 
 ### Tool Blocks
 
@@ -206,7 +216,7 @@ Tool invocations display as collapsible amber-bordered sections
 showing the tool name, arguments, and output. When collapsed,
 a preview of the first 80 characters is shown.
 
-{/* ![Tool blocks](/screenshots/tool-blocks.png) */}
+![Tool blocks](/screenshots/tool-blocks.png)
 
 ### Tool Call Groups
 
@@ -214,7 +224,7 @@ Consecutive tool-only assistant messages are grouped into
 compact "N tool calls" sections with a gear icon and timestamp.
 Click to expand individual tool blocks within the group.
 
-{/* ![Tool call groups](/screenshots/tool-groups.png) */}
+![Tool call groups](/screenshots/tool-groups.png)
 
 ### Code Blocks
 
@@ -252,7 +262,7 @@ updates automatically as the agent works.
 Press `Cmd+K` (or `Ctrl+K`) to open the command palette — a
 full-screen search overlay.
 
-{/* ![Command palette](/screenshots/command-palette.png) */}
+![Command palette](/screenshots/command-palette.png)
 
 ### Recent Sessions
 
@@ -265,7 +275,7 @@ name or first message.
 Type 3 or more characters to search across all message content.
 Results appear in real time with 300ms debounce.
 
-{/* ![Search results](/screenshots/search-results.png) */}
+![Search results](/screenshots/search-results.png)
 
 Each result shows:
 
@@ -297,7 +307,7 @@ styled message rendering and works offline.
 Press `p` or click the publish button to share a session via
 GitHub Gist.
 
-{/* ![Publish modal](/screenshots/publish-modal.png) */}
+![Publish modal](/screenshots/publish-modal.png)
 
 On first use, you'll be prompted to enter a GitHub personal
 access token with the `gist` scope. The token is saved to your
@@ -356,9 +366,9 @@ Click the theme toggle in the header to switch between light
 and dark mode. The preference is saved to localStorage and
 persists across sessions.
 
-{/* ![Light theme](/screenshots/theme-light.png) */}
+![Light theme](/screenshots/theme-light.png)
 
-{/* ![Dark theme](/screenshots/theme-dark.png) */}
+![Dark theme](/screenshots/theme-dark.png)
 
 ---
 

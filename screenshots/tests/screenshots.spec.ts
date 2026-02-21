@@ -1,0 +1,516 @@
+import { test, expect, Page, Locator } from '@playwright/test';
+import { join } from 'path';
+
+const DIR = process.env.SCREENSHOT_DIR || join(
+  __dirname, '..', '..', 'public', 'screenshots'
+);
+
+const FULL = { width: 1440, height: 900 };
+
+async function snap(page: Page, name: string) {
+  await page.screenshot({
+    path: join(DIR, `${name}.png`),
+    type: 'png',
+  });
+}
+
+async function snapEl(loc: Locator, name: string) {
+  await loc.screenshot({
+    path: join(DIR, `${name}.png`),
+    type: 'png',
+  });
+}
+
+async function waitForApp(page: Page) {
+  await page.goto('/');
+  await page.waitForSelector('.session-item', {
+    timeout: 15_000,
+  });
+  // Let analytics charts render
+  await page.waitForTimeout(3000);
+}
+
+async function setDateRange1Y(page: Page) {
+  const btn = page.locator('.preset-btn', { hasText: '1y' });
+  if (await btn.count() > 0) {
+    await btn.click();
+    await page.waitForTimeout(2000);
+  }
+}
+
+async function selectFirstSession(page: Page) {
+  const items = page.locator('.session-item');
+  await items.first().click();
+  await page.waitForSelector('.message', { timeout: 10_000 });
+  await page.waitForTimeout(1000);
+}
+
+// Find a session likely to have thinking/tool content
+// by looking for ones with higher message counts
+async function selectRichSession(page: Page) {
+  const items = page.locator('.session-item');
+  const count = await items.count();
+  // Try the 3rd session (index 2) for variety, fall back to first
+  const idx = Math.min(2, count - 1);
+  await items.nth(idx).click();
+  await page.waitForSelector('.message', { timeout: 10_000 });
+  await page.waitForTimeout(1000);
+}
+
+// ── Dashboard / Analytics ───────────────────────────────
+
+test.describe('Dashboard', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+    await setDateRange1Y(page);
+  });
+
+  test('full dashboard', async ({ page }) => {
+    await snap(page, 'dashboard');
+  });
+
+  test('summary cards', async ({ page }) => {
+    const el = page.locator('.summary-cards');
+    if (await el.count() > 0) {
+      await snapEl(el, 'summary-cards');
+    }
+  });
+
+  test('date range and toolbar', async ({ page }) => {
+    const el = page.locator('.analytics-toolbar');
+    if (await el.count() > 0) {
+      await snapEl(el, 'date-range');
+    }
+  });
+
+  test('activity heatmap', async ({ page }) => {
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    // Heatmap is typically the first chart panel after
+    // summary cards
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && text.includes('Activity')) {
+        await snapEl(panels.nth(i), 'heatmap');
+        break;
+      }
+    }
+  });
+
+  test('heatmap click-to-filter', async ({ page }) => {
+    // Click a heatmap cell to show the filtering behavior
+    const cells = page.locator('rect[data-date]');
+    if (await cells.count() > 0) {
+      // Find a cell with data (non-zero)
+      for (let i = 0; i < await cells.count(); i++) {
+        const fill = await cells.nth(i).getAttribute('fill');
+        // Skip cells with no activity (level 0 / transparent)
+        if (fill && fill !== 'transparent' && !fill.includes('0.0')) {
+          await cells.nth(i).click();
+          await page.waitForTimeout(1500);
+          break;
+        }
+      }
+      await snap(page, 'heatmap-filtered');
+      // Click again to deselect
+      const selected = page.locator('rect[data-date].selected, rect[data-date][stroke]');
+      if (await selected.count() > 0) {
+        await selected.first().click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  test('hour of week heatmap', async ({ page }) => {
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && (text.includes('Hour') || text.includes('Week'))) {
+        await snapEl(panels.nth(i), 'hour-of-week');
+        break;
+      }
+    }
+  });
+
+  test('activity timeline', async ({ page }) => {
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && text.includes('Timeline')) {
+        await snapEl(panels.nth(i), 'activity-timeline');
+        break;
+      }
+    }
+  });
+
+  test('top sessions', async ({ page }) => {
+    // Scroll down to find top sessions
+    const content = page.locator('.analytics-content');
+    await content.evaluate(
+      (el) => el.scrollTo(0, el.scrollHeight / 3)
+    );
+    await page.waitForTimeout(500);
+
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && text.includes('Top')) {
+        await panels.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+        await snapEl(panels.nth(i), 'top-sessions');
+        break;
+      }
+    }
+  });
+
+  test('project breakdown', async ({ page }) => {
+    const content = page.locator('.analytics-content');
+    await content.evaluate(
+      (el) => el.scrollTo(0, el.scrollHeight / 3)
+    );
+    await page.waitForTimeout(500);
+
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && text.includes('Project')) {
+        await panels.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+        await snapEl(panels.nth(i), 'project-breakdown');
+        break;
+      }
+    }
+  });
+
+  test('session shape', async ({ page }) => {
+    const content = page.locator('.analytics-content');
+    await content.evaluate(
+      (el) => el.scrollTo(0, el.scrollHeight / 2)
+    );
+    await page.waitForTimeout(500);
+
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && (text.includes('Shape') || text.includes('Distribution'))) {
+        await panels.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+        await snapEl(panels.nth(i), 'session-shape');
+        break;
+      }
+    }
+  });
+
+  test('tool usage', async ({ page }) => {
+    const content = page.locator('.analytics-content');
+    await content.evaluate(
+      (el) => el.scrollTo(0, (el.scrollHeight * 2) / 3)
+    );
+    await page.waitForTimeout(500);
+
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && text.includes('Tool')) {
+        await panels.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+        await snapEl(panels.nth(i), 'tool-usage');
+        break;
+      }
+    }
+  });
+
+  test('velocity metrics', async ({ page }) => {
+    const content = page.locator('.analytics-content');
+    await content.evaluate(
+      (el) => el.scrollTo(0, (el.scrollHeight * 3) / 4)
+    );
+    await page.waitForTimeout(500);
+
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && text.includes('Velocity')) {
+        await panels.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+        await snapEl(panels.nth(i), 'velocity');
+        break;
+      }
+    }
+  });
+
+  test('agent comparison', async ({ page }) => {
+    const content = page.locator('.analytics-content');
+    await content.evaluate(
+      (el) => el.scrollTo(0, el.scrollHeight)
+    );
+    await page.waitForTimeout(500);
+
+    const panels = page.locator('.chart-panel');
+    const count = await panels.count();
+    for (let i = 0; i < count; i++) {
+      const text = await panels.nth(i).textContent();
+      if (text && text.includes('Agent')) {
+        await panels.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+        await snapEl(panels.nth(i), 'agent-comparison');
+        break;
+      }
+    }
+  });
+});
+
+// ── Session browser ─────────────────────────────────────
+
+test.describe('Session browser', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+  });
+
+  test('session list', async ({ page }) => {
+    const sidebar = page.locator('.sidebar');
+    if (await sidebar.count() > 0) {
+      await snapEl(sidebar, 'session-list');
+    }
+  });
+
+  test('project filter', async ({ page }) => {
+    // Select a project from the dropdown
+    const select = page.locator('.project-select');
+    if (await select.count() > 0) {
+      await select.selectOption({ index: 1 });
+      await page.waitForTimeout(1000);
+      await snap(page, 'session-filtered');
+    }
+  });
+});
+
+// ── Message viewer ──────────────────────────────────────
+
+test.describe('Message viewer', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+  });
+
+  test('full message view', async ({ page }) => {
+    await selectRichSession(page);
+    await snap(page, 'message-viewer');
+  });
+
+  test('thinking blocks', async ({ page }) => {
+    await selectRichSession(page);
+
+    // Enable thinking blocks
+    await page.keyboard.press('t');
+    await page.waitForTimeout(500);
+
+    // Look for a thinking block
+    const thinking = page.locator('.thinking-block').first();
+    if (await thinking.isVisible()) {
+      // Expand it by clicking the header
+      const header = thinking.locator('.thinking-header');
+      if (await header.count() > 0) {
+        await header.click();
+        await page.waitForTimeout(300);
+      }
+      await snapEl(thinking, 'thinking-blocks');
+    } else {
+      // Scroll through messages to find one with thinking
+      const messages = page.locator('.message');
+      const count = await messages.count();
+      for (let i = 0; i < Math.min(count, 20); i++) {
+        await messages.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(200);
+        const tb = page.locator('.thinking-block').first();
+        if (await tb.isVisible()) {
+          const hdr = tb.locator('.thinking-header');
+          if (await hdr.count() > 0) await hdr.click();
+          await page.waitForTimeout(300);
+          await snapEl(tb, 'thinking-blocks');
+          break;
+        }
+      }
+    }
+  });
+
+  test('tool blocks', async ({ page }) => {
+    await selectRichSession(page);
+
+    const tool = page.locator('.tool-block').first();
+    if (await tool.isVisible()) {
+      // Expand it
+      const header = tool.locator('.tool-header');
+      if (await header.count() > 0) {
+        await header.click();
+        await page.waitForTimeout(300);
+      }
+      await snapEl(tool, 'tool-blocks');
+    } else {
+      // Scroll to find one
+      const messages = page.locator('.message');
+      const count = await messages.count();
+      for (let i = 0; i < Math.min(count, 20); i++) {
+        await messages.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(200);
+        const tb = page.locator('.tool-block').first();
+        if (await tb.isVisible()) {
+          const hdr = tb.locator('.tool-header');
+          if (await hdr.count() > 0) await hdr.click();
+          await page.waitForTimeout(300);
+          await snapEl(tb, 'tool-blocks');
+          break;
+        }
+      }
+    }
+  });
+
+  test('tool call groups', async ({ page }) => {
+    await selectRichSession(page);
+
+    const group = page.locator('.tool-group').first();
+    if (await group.isVisible()) {
+      await snapEl(group, 'tool-groups');
+    } else {
+      const messages = page.locator('.virtual-row');
+      const count = await messages.count();
+      for (let i = 0; i < Math.min(count, 30); i++) {
+        await messages.nth(i).scrollIntoViewIfNeeded();
+        await page.waitForTimeout(150);
+        const tg = page.locator('.tool-group').first();
+        if (await tg.isVisible()) {
+          await snapEl(tg, 'tool-groups');
+          break;
+        }
+      }
+    }
+  });
+});
+
+// ── Command palette & search ────────────────────────────
+
+test.describe('Command palette', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+  });
+
+  test('recent sessions', async ({ page }) => {
+    await page.keyboard.press('Control+k');
+    await page.waitForSelector('.palette-overlay', {
+      timeout: 5_000,
+    });
+    await page.waitForTimeout(500);
+    await snap(page, 'command-palette');
+  });
+
+  test('search results', async ({ page }) => {
+    await page.keyboard.press('Control+k');
+    await page.waitForSelector('.palette-overlay', {
+      timeout: 5_000,
+    });
+
+    const input = page.locator('.palette-input');
+    await input.fill('implement');
+    await page.waitForTimeout(1500);
+    await snap(page, 'search-results');
+  });
+});
+
+// ── Modals ──────────────────────────────────────────────
+
+test.describe('Modals', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+  });
+
+  test('shortcuts modal', async ({ page }) => {
+    await page.keyboard.press('?');
+    await page.waitForSelector('.shortcuts-overlay', {
+      timeout: 5_000,
+    });
+    await page.waitForTimeout(300);
+    await snap(page, 'shortcuts-modal');
+  });
+
+  test('publish modal', async ({ page }) => {
+    await selectFirstSession(page);
+    await page.keyboard.press('p');
+    await page.waitForTimeout(500);
+
+    const modal = page.locator(
+      '.publish-overlay, .publish-modal'
+    );
+    if (await modal.count() > 0) {
+      await snap(page, 'publish-modal');
+    }
+    await page.keyboard.press('Escape');
+  });
+});
+
+// ── Themes ──────────────────────────────────────────────
+
+test.describe('Themes', () => {
+  test('dark theme session view', async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+    await selectRichSession(page);
+
+    // Ensure dark mode
+    const isDark = await page.evaluate(
+      () => document.documentElement.classList.contains('dark')
+    );
+    if (!isDark) {
+      // Find and click theme toggle
+      const btns = page.locator('.header-btn');
+      const count = await btns.count();
+      for (let i = 0; i < count; i++) {
+        const title = await btns.nth(i).getAttribute('title');
+        const aria = await btns.nth(i).getAttribute('aria-label');
+        const text = (title || '') + (aria || '');
+        if (text.toLowerCase().includes('theme')) {
+          await btns.nth(i).click();
+          await page.waitForTimeout(500);
+          break;
+        }
+      }
+    }
+    await snap(page, 'theme-dark');
+  });
+
+  test('light theme session view', async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+    await selectRichSession(page);
+
+    // Switch to light mode
+    const isDark = await page.evaluate(
+      () => document.documentElement.classList.contains('dark')
+    );
+    if (isDark) {
+      const btns = page.locator('.header-btn');
+      const count = await btns.count();
+      for (let i = 0; i < count; i++) {
+        const title = await btns.nth(i).getAttribute('title');
+        const aria = await btns.nth(i).getAttribute('aria-label');
+        const text = (title || '') + (aria || '');
+        if (text.toLowerCase().includes('theme')) {
+          await btns.nth(i).click();
+          await page.waitForTimeout(500);
+          break;
+        }
+      }
+    }
+    await snap(page, 'theme-light');
+  });
+});
