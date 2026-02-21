@@ -5,14 +5,29 @@ description: Get agentsview running in under a minute
 
 ## Install
 
-Build from source (requires Go 1.25+ with CGO):
-
 ```bash
-CGO_ENABLED=1 go install -tags fts5 \
-  github.com/wesm/agentsview/cmd/agentsview@latest
+curl -fsSL https://agentsview.io/install.sh | bash
 ```
 
-Or clone and build:
+**Windows:**
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://agentsview.io/install.ps1 | iex"
+```
+
+The installer detects your OS and architecture, downloads the latest
+release from GitHub Releases, verifies the SHA-256 checksum, and
+installs the binary.
+
+Verify the installation:
+
+```bash
+agentsview version
+```
+
+### Build from source
+
+Requires Go 1.25+ with CGO and Node.js 22+:
 
 ```bash
 git clone https://github.com/wesm/agentsview.git

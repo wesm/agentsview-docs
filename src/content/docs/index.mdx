@@ -26,8 +26,18 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ## Quick Start
 
 ```bash
-go install github.com/wesm/agentsview/cmd/agentsview@latest
+curl -fsSL https://agentsview.io/install.sh | bash
 ```
+
+**Windows:**
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://agentsview.io/install.ps1 | iex"
+```
+
+The installer detects your OS and architecture, downloads the latest
+release from GitHub Releases, verifies the SHA-256 checksum, and
+installs the binary.
 
 ```bash
 agentsview              # Start server, open browser
