@@ -12,6 +12,10 @@ export default defineConfig({
         Header: './src/components/Header.astro',
         Footer: './src/components/Footer.astro',
       },
+      social: {
+        github: 'https://github.com/wesm/agentsview',
+        discord: 'https://discord.gg/fDnmxB8Wkq',
+      },
       customCss: ['./src/styles/custom.css'],
       expressiveCode: {
         themes: ['dracula'],
