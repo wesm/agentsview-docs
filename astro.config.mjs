@@ -23,6 +23,10 @@ export default defineConfig({
       },
       head: [
         {
+          tag: 'script',
+          attrs: { src: '/lightbox.js', defer: true },
+        },
+        {
           tag: 'meta',
           attrs: {
             property: 'og:type',
