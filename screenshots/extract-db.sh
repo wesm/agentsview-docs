@@ -7,7 +7,7 @@ set -euo pipefail
 SOURCE="/data/source.db"
 OUTPUT="/data/test-sessions.db"
 
-PROJECTS="'msgvault','roborev','msgvault_docs','roborev_docs','agent_session_viewer','moneyflow'"
+PROJECTS="'roborev','roborev_docs','agent_session_viewer','spicytakes.org'"
 
 echo "Extracting open-source projects from source database..."
 
