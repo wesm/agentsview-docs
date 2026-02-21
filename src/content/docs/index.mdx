@@ -69,23 +69,7 @@ agentsview -no-browser  # Start without opening browser
 
 ## How It Works
 
-<div class="arch-diagram">
-<strong>Session Files</strong> (Claude, Codex, Gemini)
-        │
-        ▼
-<strong>File Watcher</strong> ──▶ <strong>Sync Engine</strong> (8 workers)
-        │                    │
-        │              parse JSONL
-        │                    │
-        ▼                    ▼
-<strong>SQLite + FTS5</strong> ◀── sessions, messages, tool_calls
-        │
-        ▼
-<strong>HTTP Server</strong> ──▶ REST API + SSE
-        │
-        ▼
-<strong>Svelte 5 SPA</strong> (embedded in binary)
-</div>
+<img src="/architecture.svg" alt="agentsview architecture: agent sessions sync into SQLite with FTS5 search, served via REST API, SSE events, and embedded Svelte SPA" style="width: 100%; max-width: 960px; margin: 1.5rem auto; display: block;" />
 
 agentsview watches your agent session directories for changes,
 parses JSONL files from each agent format, and stores structured

@@ -1,0 +1,379 @@
+---
+title: Usage Guide
+description: Complete guide to the agentsview web interface
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+agentsview serves a full-featured web application for browsing,
+searching, and analyzing your AI agent sessions. This page walks
+through every part of the interface.
+
+## Dashboard
+
+When you open agentsview with no session selected, you see the
+analytics dashboard. It provides a high-level overview of your
+agent activity across all projects.
+
+{/* ![Analytics dashboard](/screenshots/dashboard.png) */}
+
+The dashboard header includes:
+
+- **Project filter** — dropdown to scope everything to a single
+  project, showing session counts per project
+- **Search bar** — opens the command palette (`Cmd+K`)
+- **Sync button** — triggers a manual sync of session files
+- **Theme toggle** — switch between light and dark mode
+- **Shortcuts button** (`?`) — shows all keyboard shortcuts
+
+The status bar at the bottom shows session count, message count,
+project count, last sync time, and the build version.
+
+### Summary Cards
+
+Six cards at the top of the dashboard show key metrics for the
+selected date range:
+
+{/* ![Summary cards](/screenshots/summary-cards.png) */}
+
+| Card | Description |
+|------|-------------|
+| Sessions | Total session count |
+| Messages | Total message count |
+| Projects | Number of active projects |
+| Active Days | Days with at least one session |
+| Messages/Session | Average with median and p90 |
+| Concentration | Most active project and its share |
+
+### Date Range Picker
+
+Quick presets for 7 days, 30 days, 90 days, and 1 year, plus
+custom start/end date inputs. All charts update when the range
+changes.
+
+{/* ![Date range picker](/screenshots/date-range.png) */}
+
+### Activity Heatmap
+
+A GitHub-style contribution graph showing daily activity. Toggle
+between message count and session count. Click any cell to filter
+all other charts to that single day.
+
+{/* ![Activity heatmap](/screenshots/heatmap.png) */}
+
+### Hour of Week Heatmap
+
+A 7x24 grid showing when you use agents most. Rows are days of
+the week, columns are hours. Color intensity represents message
+volume.
+
+{/* ![Hour of week heatmap](/screenshots/hour-of-week.png) */}
+
+### Activity Timeline
+
+A stacked chart showing messages, sessions, tool calls, and
+thinking blocks over time. Toggle between daily, weekly, and
+monthly granularity. Includes breakdown by agent.
+
+{/* ![Activity timeline](/screenshots/activity-timeline.png) */}
+
+### Top Sessions
+
+A ranked list of your longest sessions by message count or
+duration. Click any session to jump directly to it in the
+session viewer.
+
+{/* ![Top sessions](/screenshots/top-sessions.png) */}
+
+### Project Breakdown
+
+Bar chart of all projects sorted by session or message count.
+Shows average and median messages per session for each project.
+
+{/* ![Project breakdown](/screenshots/project-breakdown.png) */}
+
+### Session Shape Distribution
+
+Three histograms showing the distribution of:
+
+1. **Session length** — number of messages per session
+2. **Session duration** — time in minutes
+3. **Session autonomy** — ratio of tool calls to conversation turns
+
+{/* ![Session shape](/screenshots/session-shape.png) */}
+
+### Tool Usage
+
+Total tool call count with breakdowns by category (Read, Edit,
+Write, Bash, Search, Web, Task) and by agent. Includes a trend
+chart showing tool usage over time.
+
+{/* ![Tool usage](/screenshots/tool-usage.png) */}
+
+### Velocity Metrics
+
+Performance metrics including:
+
+- Turn cycle time (p50, p90)
+- First response time (p50, p90)
+- Messages, characters, and tool calls per active minute
+- Breakdown by agent and by session complexity
+
+{/* ![Velocity metrics](/screenshots/velocity.png) */}
+
+### Agent Comparison
+
+Side-by-side metrics across agents: session count, total
+messages, average response time, tool usage patterns, and
+concentration metrics.
+
+{/* ![Agent comparison](/screenshots/agent-comparison.png) */}
+
+### CSV Export
+
+Click **Export CSV** in the dashboard toolbar to download all
+analytics data as a CSV file. Includes summary, activity,
+projects, tools, and velocity sections.
+
+---
+
+## Session Browser
+
+The left sidebar lists all sessions with virtual scrolling for
+smooth performance even with thousands of sessions.
+
+{/* ![Session list](/screenshots/session-list.png) */}
+
+Each session item shows:
+
+- **Agent indicator** — color-coded dot (green for Codex, blue
+  for others)
+- **Session name** — first message text, truncated to 50
+  characters
+- **Project name** — abbreviated, right-aligned
+- **Relative time** — "2h ago", "Mon", "Dec 1"
+- **Message count** — shown after a bullet separator
+
+### Filtering
+
+Filter sessions using the project dropdown in the header.
+URL parameters are supported for direct linking:
+
+```
+#/sessions?project=myapp&agent=claude&date_from=2025-01-01
+```
+
+Available URL filters: `project`, `agent`, `date`, `date_from`,
+`date_to`, `min_messages`, `max_messages`.
+
+### Navigation
+
+Use `]` and `[` to move between sessions in the list. The
+selected session is highlighted with a left border accent.
+
+---
+
+## Message Viewer
+
+Selecting a session opens the message viewer in the main content
+area. Messages display in a scrollable list with virtual
+rendering for large sessions.
+
+{/* ![Message viewer](/screenshots/message-viewer.png) */}
+
+### Message Display
+
+Each message has a colored left border indicating role:
+
+- **Blue** — user messages
+- **Purple** — assistant messages
+
+The header shows the role label and timestamp. Message content
+renders with full Markdown support: headings, code blocks,
+lists, tables, links, and images.
+
+### Thinking Blocks
+
+Assistant thinking blocks appear as collapsible sections with a
+purple left border. Toggle visibility for all thinking blocks
+with the `t` key or the thinking button in the header.
+
+{/* ![Thinking blocks](/screenshots/thinking-blocks.png) */}
+
+### Tool Blocks
+
+Tool invocations display as collapsible amber-bordered sections
+showing the tool name, arguments, and output. When collapsed,
+a preview of the first 80 characters is shown.
+
+{/* ![Tool blocks](/screenshots/tool-blocks.png) */}
+
+### Tool Call Groups
+
+Consecutive tool-only assistant messages are grouped into
+compact "N tool calls" sections with a gear icon and timestamp.
+Click to expand individual tool blocks within the group.
+
+{/* ![Tool call groups](/screenshots/tool-groups.png) */}
+
+### Code Blocks
+
+Fenced code blocks render with language labels, monospace
+formatting, and horizontal scrolling for long lines.
+
+### Sorting
+
+Toggle between newest-first and oldest-first with the `o` key
+or the sort button in the header. The arrow icon indicates the
+current direction.
+
+### Message Navigation
+
+- `j` or `↓` — next message
+- `k` or `↑` — previous message
+- Click a message to select it (blue outline)
+
+### Progressive Loading
+
+Sessions with more than 20,000 messages load the most recent
+1,000 messages first. Older messages load automatically as you
+scroll up. Smaller sessions load all messages at once.
+
+### Live Updates
+
+When viewing an active session, agentsview uses Server-Sent
+Events to stream new messages in real time. The message list
+updates automatically as the agent works.
+
+---
+
+## Command Palette
+
+Press `Cmd+K` (or `Ctrl+K`) to open the command palette — a
+full-screen search overlay.
+
+{/* ![Command palette](/screenshots/command-palette.png) */}
+
+### Recent Sessions
+
+With an empty or short query (under 3 characters), the palette
+shows your 10 most recent sessions. Type to filter by project
+name or first message.
+
+### Full-Text Search
+
+Type 3 or more characters to search across all message content.
+Results appear in real time with 300ms debounce.
+
+{/* ![Search results](/screenshots/search-results.png) */}
+
+Each result shows:
+
+- **Role badge** — U (user) or A (assistant) in a colored box
+- **Snippet** — matching text with highlighted search terms
+- **Project name** — right-aligned
+
+Select a result to jump to that session and scroll directly to
+the matching message.
+
+### Keyboard Navigation
+
+- `↑` / `↓` — navigate results
+- `Enter` — select current result
+- `Esc` — close palette
+
+---
+
+## Session Export
+
+Press `e` or click the export button to download the current
+session as a standalone HTML file. The exported file includes
+styled message rendering and works offline.
+
+---
+
+## Publish to Gist
+
+Press `p` or click the publish button to share a session via
+GitHub Gist.
+
+{/* ![Publish modal](/screenshots/publish-modal.png) */}
+
+On first use, you'll be prompted to enter a GitHub personal
+access token with the `gist` scope. The token is saved to your
+config file and reused for future publishes.
+
+After publishing, the modal shows two URLs:
+
+- **View URL** — rendered view of the gist
+- **Gist URL** — direct GitHub link
+
+Both have copy buttons and an "Open in Browser" action.
+
+---
+
+## Session Upload
+
+Upload session JSONL files from other machines via the API:
+
+```bash
+curl -F "file=@session.jsonl" \
+  "http://127.0.0.1:8080/api/v1/sessions/upload?project=myapp"
+```
+
+Uploaded files are stored in `~/.agentsview/uploads/` and
+synced into the database.
+
+---
+
+## Keyboard Shortcuts
+
+Press `?` to see all shortcuts in a modal overlay.
+
+| Key | Action |
+|-----|--------|
+| `Cmd+K` | Open command palette |
+| `Esc` | Close modal / deselect session |
+| `j` / `↓` | Next message |
+| `k` / `↑` | Previous message |
+| `]` | Next session |
+| `[` | Previous session |
+| `o` | Toggle sort order |
+| `t` | Toggle thinking blocks |
+| `r` | Trigger sync |
+| `e` | Export session |
+| `p` | Publish to Gist |
+| `?` | Show shortcuts |
+
+Shortcuts are disabled when typing in an input field. `Esc`
+always works.
+
+---
+
+## Theme
+
+Click the theme toggle in the header to switch between light
+and dark mode. The preference is saved to localStorage and
+persists across sessions.
+
+{/* ![Light theme](/screenshots/theme-light.png) */}
+
+{/* ![Dark theme](/screenshots/theme-dark.png) */}
+
+---
+
+## Sync
+
+agentsview automatically syncs session files on startup and
+watches for changes in real time. The sync status is shown in
+the status bar:
+
+- **Syncing indicator** — green text showing progress percentage
+  and phase ("Scanning [project]..." or parse progress)
+- **Last sync time** — relative timestamp ("synced 2h ago")
+
+Press `r` to trigger a manual sync. The sync button in the
+header shows a spinning animation while syncing.
+
+The status bar also shows a version mismatch warning (red) if
+the frontend and backend versions differ. Click it to reload.

@@ -14,7 +14,7 @@ export default defineConfig({
       },
       customCss: ['./src/styles/custom.css'],
       expressiveCode: {
-        themes: ['github-light'],
+        themes: ['dracula'],
         styleOverrides: {
           copyButton: {
             visible: true,
@@ -32,11 +32,11 @@ export default defineConfig({
       ],
       sidebar: [
         { label: 'Quick Start', slug: 'quickstart' },
+        { label: 'Usage Guide', slug: 'usage' },
         { label: 'CLI Reference', slug: 'commands' },
         { label: 'Configuration', slug: 'configuration' },
         { label: 'API Reference', slug: 'api' },
         { label: 'Architecture', slug: 'architecture' },
-        { label: 'Development', slug: 'development' },
       ],
     }),
   ],
