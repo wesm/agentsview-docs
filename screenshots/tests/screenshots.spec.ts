@@ -34,7 +34,7 @@ async function setDateRange1Y(page: Page) {
   const btn = page.locator('.preset-btn', { hasText: '1y' });
   if (await btn.count() > 0) {
     await btn.click();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
   }
 }
 
@@ -85,16 +85,14 @@ test.describe('Dashboard', () => {
   });
 
   test('activity heatmap', async ({ page }) => {
-    const panels = page.locator('.chart-panel');
-    const count = await panels.count();
-    // Heatmap is typically the first chart panel after
-    // summary cards
-    for (let i = 0; i < count; i++) {
-      const text = await panels.nth(i).textContent();
-      if (text && text.includes('Activity')) {
-        await snapEl(panels.nth(i), 'heatmap');
-        break;
-      }
+    const heatmap = page.locator('.heatmap-container');
+    if (await heatmap.count() > 0) {
+      // Wait for SVG cells to render
+      await page.waitForSelector('.heatmap-cell', {
+        timeout: 10_000,
+      });
+      await page.waitForTimeout(500);
+      await snapEl(heatmap, 'heatmap');
     }
   });
 
