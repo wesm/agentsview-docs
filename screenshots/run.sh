@@ -51,7 +51,7 @@ rsync -a \
   --exclude='.git' \
   --exclude='node_modules' \
   --exclude='.cache' \
-  --exclude='agentsview' \
+  --exclude='/agentsview' \
   "$AGENTSVIEW_SRC/" "$CONTEXT/agentsview/"
 
 # Copy source database
