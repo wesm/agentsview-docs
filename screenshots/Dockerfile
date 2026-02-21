@@ -34,7 +34,7 @@ FROM node:22-bookworm
 WORKDIR /work
 
 # Install Playwright dependencies
-COPY screenshots/package.json .
+COPY screenshots/package.json screenshots/package-lock.json ./
 RUN npm ci
 RUN npx playwright install --with-deps chromium
 
