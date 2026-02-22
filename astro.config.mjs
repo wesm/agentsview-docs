@@ -43,7 +43,6 @@ export default defineConfig({
         { label: 'Usage Guide', slug: 'usage' },
         { label: 'CLI Reference', slug: 'commands' },
         { label: 'Configuration', slug: 'configuration' },
-        { label: 'API Reference', slug: 'api' },
         { label: 'Architecture', slug: 'architecture' },
       ],
     }),

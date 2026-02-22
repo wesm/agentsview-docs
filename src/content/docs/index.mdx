@@ -2,15 +2,15 @@
 title: agentsview
 description: Local web viewer and analytics for AI agent sessions
 hero:
-  tagline: Browse, search, and analyze your AI agent sessions. A local analytics dashboard for Claude Code, Codex, and Gemini CLI.
+  tagline: A local web app for browsing, searching, and analyzing your past AI coding sessions. See what your agents actually did across every project.
   image:
     html: '<img src="/screenshots/dashboard.png" alt="agentsview analytics dashboard" />'
   actions:
     - text: Get Started
       link: /quickstart/
       icon: right-arrow
-    - text: API Reference
-      link: /api/
+    - text: View on GitHub
+      link: https://github.com/wesm/agentsview
       icon: external
       variant: minimal
 ---
@@ -45,37 +45,43 @@ agentsview -port 9090   # Custom port
 agentsview -no-browser  # Start without opening browser
 ```
 
-## Features
+## What It Does
+
+agentsview reads the session files that Claude Code, Codex, and
+Gemini CLI leave on your machine and gives you a web interface to
+work with them. It runs locally — nothing leaves your machine.
 
 <CardGrid stagger>
-  <Card title="Multi-Agent Support" icon="rocket">
-    Parses and displays sessions from Claude Code, Codex,
-    and Gemini CLI. Auto-discovers session directories.
+  <Card title="Browse Sessions" icon="open-book">
+    Scroll through every session across all your projects.
+    See the full conversation: user prompts, assistant
+    responses, thinking blocks, and tool calls. Filter by
+    project, agent, date, or message count.
   </Card>
-  <Card title="Full-Text Search" icon="magnifier">
-    FTS5-powered search with Porter stemming across all
-    message content. Phrase search, project filtering,
-    and cursor-based pagination.
+  <Card title="Search Everything" icon="magnifier">
+    Full-text search across all message content. Find that
+    one conversation where you discussed a specific function,
+    error message, or design decision — even months later.
   </Card>
-  <Card title="Analytics Dashboard" icon="document">
+  <Card title="Analyze Your Usage" icon="document">
     Activity heatmaps, tool usage breakdowns, velocity
-    tracking, per-project stats, and session distribution
-    charts. Timezone-aware date ranges.
+    metrics, per-project stats, and session distribution
+    charts. Understand how you use agents over time.
   </Card>
-  <Card title="Real-Time Monitoring" icon="setting">
-    Server-Sent Events stream live session updates.
-    File watcher detects new and modified sessions
-    automatically.
+  <Card title="Multi-Agent Support" icon="rocket">
+    Works with Claude Code, Codex, and Gemini CLI.
+    Auto-discovers session directories so there's nothing
+    to configure.
   </Card>
-  <Card title="Session Management" icon="pencil">
-    Export sessions as standalone HTML. Publish to GitHub
-    Gist. Prune old sessions by project, date, or message
-    count.
+  <Card title="Export and Share" icon="pencil">
+    Export any session as a standalone HTML file. Publish
+    to GitHub Gist for sharing. Prune old sessions to
+    keep your database lean.
   </Card>
   <Card title="Runs Locally" icon="laptop">
-    SQLite with WAL mode. Embedded Svelte 5 frontend.
-    No cloud services, no accounts. Your data stays on
-    your machine.
+    SQLite database, embedded web frontend, no cloud
+    services, no accounts. Install a single binary and
+    run it.
   </Card>
 </CardGrid>
 
