@@ -218,6 +218,13 @@ a preview of the first 80 characters is shown.
 
 ![Tool blocks](/screenshots/tool-blocks.png)
 
+When expanded, tool blocks display structured metadata tags
+extracted from the tool call input. For task management tools
+(TaskCreate, TaskUpdate, TaskGet), these tags show the task
+subject, status, and ID at a glance. Bash tool blocks show
+the full command text, including multi-line commands like
+heredocs that would otherwise be truncated.
+
 ### Tool Call Groups
 
 Consecutive tool-only assistant messages are grouped into

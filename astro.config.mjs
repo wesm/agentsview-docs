@@ -40,6 +40,7 @@ export default defineConfig({
       ],
       sidebar: [
         { label: 'Quick Start', slug: 'quickstart' },
+        { label: 'Insights', slug: 'insights' },
         { label: 'Usage Guide', slug: 'usage' },
         { label: 'CLI Reference', slug: 'commands' },
         { label: 'Configuration', slug: 'configuration' },

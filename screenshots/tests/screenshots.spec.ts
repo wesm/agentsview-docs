@@ -440,6 +440,52 @@ test.describe('Modals', () => {
   });
 });
 
+// ── Insights ────────────────────────────────────────────
+
+test.describe('Insights', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(FULL);
+    await waitForApp(page);
+  });
+
+  async function navigateToInsights(page: Page) {
+    const navBtn = page.locator('.nav-btn', { hasText: 'Insights' });
+    await navBtn.click();
+    await page.waitForSelector('.insights-page', {
+      timeout: 10_000,
+    });
+    await page.waitForTimeout(1000);
+  }
+
+  test('full insights page', async ({ page }) => {
+    await navigateToInsights(page);
+
+    // Select the first completed insight (weekly analysis)
+    const rows = page.locator('.insight-row');
+    if (await rows.count() > 0) {
+      await rows.first().click();
+      await page.waitForTimeout(500);
+    }
+    await snap(page, 'insights');
+  });
+
+  test('insight content', async ({ page }) => {
+    await navigateToInsights(page);
+
+    // Select the first insight to show content
+    const rows = page.locator('.insight-row');
+    if (await rows.count() > 0) {
+      await rows.first().click();
+      await page.waitForTimeout(500);
+    }
+
+    const content = page.locator('.content-panel');
+    if (await content.count() > 0) {
+      await snapEl(content, 'insight-content');
+    }
+  });
+});
+
 // ── Themes ──────────────────────────────────────────────
 
 test.describe('Themes', () => {
