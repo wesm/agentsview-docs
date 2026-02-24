@@ -1,0 +1,46 @@
+---
+title: Gemini tutorial
+description: Tutorial on how to use agentsview when adding a document to a project using Gemini CLI.
+---
+
+Tutorial on how to use agentsview when adding a document to a project using Gemini CLI.
+
+1. Create your Gemini API Key from your project from here: https://aistudio.google.com/app/api-keys
+
+2. Configure your environment:
+
+```bash
+$ export GEMINI_API_KEY="YOUR_API_KEY_HERE" >> ~/.bashrc
+$ export GEMINI_MODEL="gemini-2.0-flash-exp" >> ~/.bashrc
+$ source ~/.bashrc
+```
+
+3. Run gemini-cli:
+
+```bash
+$ npm install -g @google/gemini-cli
+$ gemini
+```
+
+![Gemini CLI Prompt](/screenshots/gemini-0.png)
+
+4. Prompt gemini to add the page.
+
+![Gemini CLI Thinking](/screenshots/gemini-1.png)
+![Gemini CLI Action](/screenshots/gemini-2.png)
+![Gemini CLI Completion](/screenshots/gemini-3.png)
+![Gemini CLI Result](/screenshots/gemini-4.png)
+
+5. On another terminal, run agentsview:
+
+```bash
+$ curl -fsSL https://agentsview.io/install.sh | bash
+$ agentsview
+```
+
+6. In your browser you monitor your sessions.
+
+![AgentsView Syncing](/screenshots/AgentsView-1.png)
+![AgentsView Session Detail](/screenshots/AgentsView-3.png)
+![AgentsView Tool Usage](/screenshots/AgentsView-4.png)
+![AgentsView Multi-session Dashboard](/screenshots/AgentsView-5.png)
