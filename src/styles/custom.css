@@ -168,6 +168,7 @@ nav a[aria-current="page"] {
   display: flex !important;
   align-items: center !important;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
 /* Reduce gap after hero */
@@ -420,10 +421,8 @@ button, .button {
 /* Site title */
 .site-title {
   font-family: var(--sl-font-mono);
-  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  white-space: nowrap;
 }
 
 /* Images and videos */
