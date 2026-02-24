@@ -147,6 +147,20 @@ projects, tools, and velocity sections.
 
 ---
 
+## Session Insights
+
+agentsview can generate AI-powered summaries and analysis of your
+coding sessions using Claude, Codex, or Gemini. Click **Insights**
+in the header navigation bar to open the Insights page, where you
+can generate daily activity digests, multi-day summaries, and
+deeper analyses of your agent workflow patterns — scoped by
+project or across everything.
+
+See the [Session Insights](/insights/) page for full
+documentation.
+
+---
+
 ## Session Browser
 
 The left sidebar lists all sessions with virtual scrolling for
@@ -217,6 +231,13 @@ showing the tool name, arguments, and output. When collapsed,
 a preview of the first 80 characters is shown.
 
 ![Tool blocks](/screenshots/tool-blocks.png)
+
+When expanded, tool blocks display structured metadata tags
+extracted from the tool call input. For task management tools
+(TaskCreate, TaskUpdate, TaskGet), these tags show the task
+subject, status, and ID at a glance. Bash tool blocks show
+the full command text, including multi-line commands like
+heredocs that would otherwise be truncated.
 
 ### Tool Call Groups
 
