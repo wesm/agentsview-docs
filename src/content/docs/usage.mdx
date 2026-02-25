@@ -409,6 +409,20 @@ persists across sessions.
 
 ![Dark theme](/screenshots/theme-dark.png)
 
+### Iframe Embedding
+
+When embedding agentsview in an iframe, the parent page can
+control the theme via `postMessage`:
+
+```javascript
+iframe.contentWindow.postMessage(
+  { type: "theme:set", theme: "dark" },
+  "*"
+);
+```
+
+Accepted values for `theme` are `"light"` and `"dark"`.
+
 ---
 
 ## Sync

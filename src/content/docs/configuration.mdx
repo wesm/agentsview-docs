@@ -49,7 +49,8 @@ agentsview auto-discovers session files from five agent types:
 | Gemini CLI | `~/.gemini/` | JSONL in `tmp/` subdirectory |
 | OpenCode | `~/.local/share/opencode/` | SQLite database |
 
-Override any of these with environment variables:
+Override any default with an environment variable (single
+directory):
 
 ```bash
 export CLAUDE_PROJECTS_DIR=~/custom/claude
@@ -58,6 +59,33 @@ export COPILOT_DIR=~/custom/copilot
 export GEMINI_DIR=~/custom/gemini
 export OPENCODE_DIR=~/custom/opencode
 ```
+
+### Multiple Directories
+
+To scan more than one directory per agent — for example, when
+running Windows and WSL side by side — add array fields to
+`~/.agentsview/config.json`:
+
+```json
+{
+  "claude_project_dirs": [
+    "~/.claude/projects",
+    "/mnt/c/Users/you/.claude/projects"
+  ],
+  "codex_sessions_dirs": [
+    "~/.codex/sessions"
+  ]
+}
+```
+
+The corresponding fields are `claude_project_dirs`,
+`codex_sessions_dirs`, `copilot_dirs`, `gemini_dirs`, and
+`opencode_dirs`. Each accepts an array of paths. When set,
+these take precedence over the single-directory environment
+variable and the default path.
+
+All listed directories are discovered, watched, and synced
+independently.
 
 ## Database
 
