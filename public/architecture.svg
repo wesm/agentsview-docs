@@ -19,23 +19,28 @@
   <!-- AGENT SESSIONS zone label -->
   <text x="40" y="38" class="zone-label">Agent Sessions</text>
 
-  <!-- Source boxes -->
-  <rect x="40" y="50" width="220" height="50" class="box-source" rx="0"/>
-  <text x="150" y="72" text-anchor="middle" class="label">Claude Code</text>
-  <text x="150" y="89" text-anchor="middle" class="sublabel">~/.claude/projects/</text>
+  <!-- Source boxes: 5 agents, each 136px wide with 10px gaps -->
+  <rect x="40" y="50" width="136" height="40" class="box-source" rx="0"/>
+  <text x="108" y="75" text-anchor="middle" class="label">Claude Code</text>
 
-  <rect x="290" y="50" width="220" height="50" class="box-source" rx="0"/>
-  <text x="400" y="72" text-anchor="middle" class="label">Codex</text>
-  <text x="400" y="89" text-anchor="middle" class="sublabel">~/.codex/sessions/</text>
+  <rect x="186" y="50" width="136" height="40" class="box-source" rx="0"/>
+  <text x="254" y="75" text-anchor="middle" class="label">Codex</text>
 
-  <rect x="540" y="50" width="220" height="50" class="box-source" rx="0"/>
-  <text x="650" y="72" text-anchor="middle" class="label">Gemini CLI</text>
-  <text x="650" y="89" text-anchor="middle" class="sublabel">~/.gemini/</text>
+  <rect x="332" y="50" width="136" height="40" class="box-source" rx="0"/>
+  <text x="400" y="75" text-anchor="middle" class="label">Copilot CLI</text>
+
+  <rect x="478" y="50" width="136" height="40" class="box-source" rx="0"/>
+  <text x="546" y="75" text-anchor="middle" class="label">Gemini CLI</text>
+
+  <rect x="624" y="50" width="136" height="40" class="box-source" rx="0"/>
+  <text x="692" y="75" text-anchor="middle" class="label">OpenCode</text>
 
   <!-- Arrows: sources down to sync -->
-  <line x1="150" y1="100" x2="150" y2="148" class="arrow"/>
-  <line x1="400" y1="100" x2="400" y2="148" class="arrow"/>
-  <line x1="650" y1="100" x2="650" y2="148" class="arrow"/>
+  <line x1="108" y1="90" x2="108" y2="148" class="arrow"/>
+  <line x1="254" y1="90" x2="254" y2="148" class="arrow"/>
+  <line x1="400" y1="90" x2="400" y2="148" class="arrow"/>
+  <line x1="546" y1="90" x2="546" y2="148" class="arrow"/>
+  <line x1="692" y1="90" x2="692" y2="148" class="arrow"/>
 
   <!-- SYNC zone label -->
   <text x="40" y="140" class="zone-label">Sync</text>
@@ -43,7 +48,7 @@
   <!-- Sync Engine box (wide) -->
   <rect x="150" y="150" width="500" height="55" class="box" rx="0"/>
   <text x="400" y="175" text-anchor="middle" class="label">Sync Engine</text>
-  <text x="400" y="192" text-anchor="middle" class="sublabel">file watcher · JSONL parsing · 8 workers</text>
+  <text x="400" y="192" text-anchor="middle" class="sublabel">file watcher · parsers · 8 workers</text>
 
   <!-- Arrow: sync down to data layer -->
   <line x1="400" y1="205" x2="400" y2="258" class="arrow"/>
