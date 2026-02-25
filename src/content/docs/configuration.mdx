@@ -39,20 +39,24 @@ API endpoint `POST /api/v1/config/github`.
 
 ## Session Discovery
 
-agentsview auto-discovers session files from three agent types:
+agentsview auto-discovers session files from five agent types:
 
 | Agent | Default Directory | File Format |
 |-------|-------------------|-------------|
 | Claude Code | `~/.claude/projects/` | JSONL per session |
 | Codex | `~/.codex/sessions/` | JSONL per session |
+| Copilot CLI | `~/.copilot/session-state/` | JSONL per session |
 | Gemini CLI | `~/.gemini/` | JSONL in `tmp/` subdirectory |
+| OpenCode | `~/.local/share/opencode/` | SQLite database |
 
 Override any of these with environment variables:
 
 ```bash
 export CLAUDE_PROJECTS_DIR=~/custom/claude
 export CODEX_SESSIONS_DIR=~/custom/codex
+export COPILOT_DIR=~/custom/copilot
 export GEMINI_DIR=~/custom/gemini
+export OPENCODE_DIR=~/custom/opencode
 ```
 
 ## Database
@@ -67,7 +71,9 @@ includes FTS5 full-text search indexes on message content.
 | `sessions` | Session metadata (project, agent, timestamps, file info) |
 | `messages` | Message content with role, ordinal, timestamps |
 | `tool_calls` | Tool invocations with normalized category taxonomy |
+| `insights` | AI-generated session analysis and summaries |
 | `stats` | Aggregate counts (session_count, message_count) |
+| `skipped_files` | Cache of non-interactive session files |
 | `messages_fts` | FTS5 virtual table for full-text search |
 
 The database is automatically migrated on startup when the
@@ -83,12 +89,13 @@ two mechanisms:
 2. **Periodic sync** — full directory scan every 15 minutes
    as a safety net
 
-Change detection uses file content hashing (not just mtime)
-to avoid unnecessary re-parsing. A pool of 8 workers processes
-files in parallel during sync.
+Change detection uses file size and mtime comparison to skip
+unchanged files. A pool of 8 workers processes files in
+parallel during sync.
 
-Files that fail to parse are tracked and retried when their
-mtime changes.
+Files that fail to parse or contain no interactive content
+are cached in the `skipped_files` table and skipped on
+subsequent syncs until their mtime changes.
 
 ## Manual Sync
 

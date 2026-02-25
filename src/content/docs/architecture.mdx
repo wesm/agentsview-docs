@@ -11,24 +11,27 @@ SQLite, indexes them for full-text search, and serves
 everything over HTTP.
 
 ```
-~/.claude/projects/   ─┐
-~/.codex/sessions/    ─┼─▶  Sync Engine  ─▶  SQLite + FTS5
-~/.gemini/            ─┘       │                    │
-                          File Watcher         HTTP Server
-                                                    │
-                                          REST API + SSE + SPA
+~/.claude/projects/          ─┐
+~/.codex/sessions/           ─┤
+~/.copilot/session-state/    ─┼─▶  Sync Engine  ─▶  SQLite + FTS5
+~/.gemini/                   ─┤       │                    │
+~/.local/share/opencode/     ─┘  File Watcher         HTTP Server
+                                                           │
+                                                 REST API + SSE + SPA
 ```
 
 ## Session Parsing
 
-Each agent writes sessions in a different JSONL format.
-agentsview includes a dedicated parser for each:
+Each agent writes sessions in its own format. agentsview
+includes a dedicated parser for each:
 
 | Agent | Parser | Source Format |
 |-------|--------|---------------|
 | Claude Code | `parser/claude.go` | Project-scoped JSONL with tool use blocks |
 | Codex | `parser/codex.go` | Session JSONL with function calls |
+| Copilot CLI | `parser/copilot.go` | JSONL event stream with session/tool events |
 | Gemini CLI | `parser/gemini.go` | Session JSONL from temp directory |
+| OpenCode | `parser/opencode.go` | SQLite database with project/session/message tables |
 
 Parsers extract a common structure:
 
@@ -61,21 +64,23 @@ SQLite with WAL mode serves as the single data store.
   stemming and Unicode 6.1 tokenization
 - **Auto-maintained triggers** keep the FTS index in sync
   with inserts, updates, and deletes
-- **Content hashing** for change detection — files are only
-  re-parsed when their content actually changes
+- **Change detection** via file size and mtime — files are
+  only re-parsed when they actually change
 - **Aggregate stats table** tracks session and message counts
   without full table scans
 
 ### Schema
 
-The database has five tables:
+The database has seven tables:
 
 | Table | Primary Key | Purpose |
 |-------|-------------|---------|
 | `sessions` | `id` (text) | Session metadata and file info |
 | `messages` | `id` (integer) | Message content and metadata |
 | `tool_calls` | `id` (integer) | Tool invocations per message |
+| `insights` | `id` (integer) | AI-generated session analysis |
 | `stats` | — | Aggregate counters |
+| `skipped_files` | `file_path` | Cache of non-interactive session files |
 | `messages_fts` | — | FTS5 full-text search index |
 
 Indexes cover the common query patterns: session listing by
@@ -88,11 +93,13 @@ The sync engine coordinates file discovery and processing:
 
 1. **Discovery** — scans configured directories for session
    files matching each agent's expected path patterns
-2. **Hashing** — computes content hashes to detect changes
+2. **Change detection** — compares file size and mtime to
+   skip unchanged files
 3. **Worker pool** — 8 concurrent goroutines parse and insert
    changed files
-4. **Failed file tracking** — files that fail to parse are
-   remembered and retried when their mtime changes
+4. **Skip cache** — non-interactive files and parse failures
+   are cached in the database and skipped until their mtime
+   changes
 
 Two sync triggers run concurrently:
 

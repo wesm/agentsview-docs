@@ -442,22 +442,42 @@ video {
   outline-offset: 2px;
 }
 
-/* Agent support badges on hero */
-.agent-badges {
+/* Agent support matrix on hero */
+.agent-matrix {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+  margin: 0 auto;
+  max-width: 650px;
   flex-wrap: wrap;
-  margin: 1rem 0;
 }
 
-.agent-badges span {
-  display: inline-block;
-  padding: 0.25em 0.6em;
-  border: 1px solid #333333;
-  background: #0f0f0f;
-  color: #c0c0c0;
-  font-size: 0.85em;
-  font-weight: 500;
+.agent-matrix + h2 {
+  margin-top: 0.5rem !important;
+}
+
+.agent-matrix img {
+  height: 20px;
+  width: auto;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  border: none !important;
+}
+
+.agent-matrix img:hover {
+  opacity: 1;
+}
+
+@media (max-width: 50rem) {
+  .agent-matrix {
+    gap: 1rem 1.25rem;
+  }
+
+  .agent-matrix img {
+    height: 16px;
+  }
 }
 
 /* Architecture diagram */
