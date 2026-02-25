@@ -459,7 +459,7 @@ video {
 }
 
 .agent-matrix img {
-  height: 22px;
+  height: 20px;
   width: auto;
   opacity: 0.7;
   transition: opacity 0.2s ease;
@@ -470,29 +470,13 @@ video {
   opacity: 1;
 }
 
-.agent-matrix img[data-agent="codex"] {
-  height: 52px;
-}
-
-.agent-matrix img[data-agent="gemini"] {
-  height: 28px;
-}
-
 @media (max-width: 50rem) {
   .agent-matrix {
     gap: 1rem 1.25rem;
   }
 
   .agent-matrix img {
-    height: 18px;
-  }
-
-  .agent-matrix img[data-agent="codex"] {
-    height: 42px;
-  }
-
-  .agent-matrix img[data-agent="gemini"] {
-    height: 22px;
+    height: 16px;
   }
 }
 
