@@ -52,7 +52,7 @@ agentsview
 This will:
 
 1. Initialize the SQLite database at `~/.agentsview/sessions.db`
-2. Discover and sync sessions from Claude Code, Codex, and Gemini CLI
+2. Discover and sync sessions from Claude Code, Codex, Copilot CLI, Gemini CLI, and OpenCode
 3. Start watching session directories for changes
 4. Launch the web UI at `http://127.0.0.1:8080`
 5. Open your browser automatically
@@ -72,7 +72,9 @@ Point to custom session directories with environment variables:
 ```bash
 export CLAUDE_PROJECTS_DIR=~/custom/claude/projects
 export CODEX_SESSIONS_DIR=~/custom/codex/sessions
+export COPILOT_DIR=~/custom/copilot
 export GEMINI_DIR=~/custom/gemini
+export OPENCODE_DIR=~/custom/opencode
 agentsview
 ```
 

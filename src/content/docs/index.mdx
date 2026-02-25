@@ -17,10 +17,12 @@ hero:
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-<div class="agent-badges">
-  <span>Claude Code</span>
-  <span>Codex</span>
-  <span>Gemini CLI</span>
+<div class="agent-matrix">
+  <img src="/agents/claude-code.svg" alt="Claude Code" data-agent="claude-code" width="696" height="95" />
+  <img src="/agents/codex.svg" alt="Codex" data-agent="codex" width="1604" height="719" />
+  <img src="/agents/gemini.svg" alt="Gemini" data-agent="gemini" width="344" height="127" />
+  <img src="/agents/copilot.svg" alt="Copilot" data-agent="copilot" width="419" height="95" />
+  <img src="/agents/opencode.svg" alt="OpenCode" data-agent="opencode" width="641" height="115" />
 </div>
 
 ## Quick Start
@@ -47,9 +49,10 @@ agentsview -no-browser  # Start without opening browser
 
 ## What It Does
 
-agentsview reads the session files that Claude Code, Codex, and
-Gemini CLI leave on your machine and gives you a web interface to
-work with them. It runs locally — nothing leaves your machine.
+agentsview reads the session files that Claude Code, Codex,
+Copilot CLI, Gemini CLI, and OpenCode leave on your machine and
+gives you a web interface to work with them. It runs locally —
+nothing leaves your machine.
 
 <CardGrid stagger>
   <Card title="AI-Powered Insights" icon="star">
@@ -81,9 +84,9 @@ work with them. It runs locally — nothing leaves your machine.
     in another.
   </Card>
   <Card title="Multi-Agent Support" icon="rocket">
-    Works with Claude Code, Codex, and Gemini CLI.
-    Auto-discovers session directories so there's nothing
-    to configure.
+    Works with Claude Code, Codex, Copilot CLI, Gemini CLI,
+    and OpenCode. Auto-discovers session directories so
+    there's nothing to configure.
   </Card>
   <Card title="Runs Locally" icon="laptop">
     SQLite database, embedded web frontend, no cloud
