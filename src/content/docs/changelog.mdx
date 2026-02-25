@@ -1,0 +1,187 @@
+---
+title: Changelog
+description: Release history for agentsview
+---
+
+## 0.5.0
+<small>2026-02-25</small>
+
+**New features**
+
+- Add Copilot CLI session support so Copilot CLI conversations appear in agentsview.
+- Add OpenCode session history support so OpenCode conversations can be synced and viewed.
+- Show a copyable Session ID in the session detail header for quicker sharing and lookup.
+
+**Improvements**
+
+- Improve session source classification and sync coverage for newly supported tools.
+- Follow symlinks during project discovery so linked workspaces are detected correctly.
+- Improve interrupted-run recovery so valid sync results are preserved more reliably.
+
+---
+
+## 0.4.1
+<small>2026-02-24</small>
+
+**Improvements**
+
+- Speed up sync to reduce startup and refresh time.
+- Improve startup logging to make initialization progress clearer.
+
+**Bug fixes**
+
+- Fix insights generation/store behavior to improve stability and accuracy.
+- Restore `CLAUDE_NO_SOUND=1` for Claude subprocesses to keep background runs silent.
+
+---
+
+## 0.4.0
+<small>2026-02-24</small>
+
+**New features**
+
+- Add AI-powered Insights with multi-agent generation for session analysis.
+- Introduce an Insights page to view and manage generated insights.
+- Add structured tool-call metadata for clearer, richer tool output display.
+
+**Improvements**
+
+- Normalize worktree project names so sessions stay grouped consistently across worktrees.
+- Improve message and tool block presentation for better readability.
+
+**Bug fixes**
+
+- Fix insight generation authentication failures.
+- Skip oversized JSONL lines during ingest so one bad line no longer fails the whole session.
+- Embed the IANA timezone database to improve timezone support on Windows.
+
+---
+
+## 0.3.2
+<small>2026-02-23</small>
+
+**New features**
+
+- Add session continuity via `sessionId` chaining, so resumed conversations stay linked as one ongoing session across sync/import.
+
+**Improvements**
+
+- Improve sidebar session list and item behavior to better represent continued sessions.
+- Make session list state updates and virtualization smoother for larger histories.
+
+**Bug fixes**
+
+- Fix cases where continued conversation segments appear as separate sessions instead of a single chain.
+- Fix Claude parsing/sync edge cases so session links persist reliably.
+
+---
+
+## 0.3.1
+<small>2026-02-22</small>
+
+**Bug fixes**
+
+- Keep exported and gist HTML styling in sync with current app design tokens for consistent visuals.
+
+---
+
+## 0.3.0
+<small>2026-02-22</small>
+
+**New features**
+
+- Add an Activity Timeline in Analytics to visualize session activity over time.
+
+**Improvements**
+
+- Improve the message viewer with clearer rendering for code blocks, tool calls, and thinking content.
+- Refine the analytics experience for easier session exploration and readability.
+- Improve sync performance to load and refresh data faster.
+- Update project dependencies to improve compatibility and stability.
+- Standardize session count formatting with explicit `en-US` locale handling for consistent display.
+
+---
+
+## 0.2.2
+<small>2026-02-22</small>
+
+**Improvements**
+
+- Reduce Hour-of-Week heatmap cell size by 20% for a denser, easier-to-scan analytics view.
+
+**Bug fixes**
+
+- Fix available-port probing to bind the correct host, improving startup reliability.
+- Ensure builds compile without frontend assets by providing `go:embed` stubs.
+
+---
+
+## 0.2.1
+<small>2026-02-21</small>
+
+**Improvements**
+
+- Improve Codex output parsing so edge cases are handled more reliably.
+
+**Bug fixes**
+
+- Make installer exit on `SHA256SUMS` download failures to prevent incomplete or unverified installs.
+
+---
+
+## 0.2.0
+<small>2026-02-21</small>
+
+**New features**
+
+- Render Codex function calls as informative tool blocks in session views and exports.
+
+**Improvements**
+
+- Make the activity calendar full-width and centered for a cleaner analytics layout.
+- Increase heatmap cell size (about 20%) to improve readability.
+- Combine day and hour activity charts into a more streamlined analytics view.
+- Default analytics to a 1-year date range instead of 30 days.
+- Match gist/export styling with the app's visual theme for consistent output.
+- Filter out system-injected user messages from the message list display.
+
+---
+
+## 0.1.0
+<small>2026-02-21</small>
+
+**New features**
+
+- Launch agentsview with an integrated Go backend and Svelte frontend.
+- Add analytics as the home screen with a persistent sidebar.
+- Add rich dashboard views, including summary cards, activity timeline, project breakdown, top sessions, and session shape metrics.
+- Add hour-of-week heatmap analytics with timezone display and interactive filtering.
+- Add tool-aware analytics, including tool usage, thinking/tool counts, velocity metrics, and agent comparison.
+- Add analytics permalinks, drill-down navigation, transitions, and CSV export.
+- Add Gemini CLI session ingestion.
+- Add tool-call ingestion and parsing (including Codex function calls) for deeper analytics.
+- Add self-update support and cross-platform install scripts.
+- Add frontend/backend version tracking with mismatch detection.
+
+**Improvements**
+
+- Improve dashboard usability with centralized active filter badges, project filtering, top sessions, and layout updates.
+- Improve session pane performance and virtualized list stability for deep scrolling.
+- Load sessions and selected session messages fully by default for smoother browsing.
+- Improve search UX by scrolling to and highlighting the matched message.
+- Keep sessions newest-first while showing messages in chronological order.
+- Refresh branding with the agentsview name, periscope logo, and favicon.
+- Update assistant message colors to a warmer, higher-contrast palette.
+
+**Bug fixes**
+
+- Fix analytics drill-down behavior so heatmap and project clicks filter and navigate correctly.
+- Fix `prune --max-messages` so it counts user messages correctly.
+- Fix Claude parsing to skip system-injected user messages.
+- Fix chart panels so they stay within dashboard grid bounds.
+- Fix route and query handling to reject invalid routes and empty filters.
+- Fix concurrent load/search race conditions to keep results consistent.
+- Harden markdown sanitization to prevent XSS and preserve escaped content.
+- Fix theme persistence when browser `localStorage` is unavailable.
+- Fix session-loading edge cases, including short session IDs and empty Gemini directories.
+- Fix Darwin release builds by targeting the macOS 15 runner.
