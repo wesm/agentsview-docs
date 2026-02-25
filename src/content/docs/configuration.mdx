@@ -68,7 +68,7 @@ includes FTS5 full-text search indexes on message content.
 
 | Table | Purpose |
 |-------|---------|
-| `sessions` | Session metadata (project, agent, timestamps, file info) |
+| `sessions` | Session metadata (project, agent, timestamps, file info, user message count) |
 | `messages` | Message content with role, ordinal, timestamps |
 | `tool_calls` | Tool invocations with normalized category taxonomy |
 | `insights` | AI-generated session analysis and summaries |
@@ -104,6 +104,15 @@ Trigger a sync from the API:
 ```bash
 curl -X POST http://127.0.0.1:8080/api/v1/sync
 ```
+
+Trigger a full resync (re-parses all session files from scratch):
+
+```bash
+curl http://127.0.0.1:8080/api/trigger-resync
+```
+
+Both endpoints stream progress via Server-Sent Events when
+accessed from a browser or SSE-capable client.
 
 Check sync status:
 

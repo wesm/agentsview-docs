@@ -3,6 +3,31 @@ title: Changelog
 description: Release history for agentsview
 ---
 
+## 0.6.0
+<small>2026-02-25</small>
+
+**New features**
+
+- Add session filters to the sidebar with recently active, minimum prompts, and agent type dropdowns.
+- Track actual user prompt count per session via a new `user_message_count` column, excluding tool-result messages.
+- Add in-app full resync: a gear icon in the header opens a modal that re-parses all session files with SSE-streamed progress, without deleting the database.
+
+**Improvements**
+
+- Filter recently active sessions by last activity timestamp instead of start date.
+- Sync filter state between the sidebar and the analytics dashboard, including clears.
+- Validate `active_since` query param server-side in both sessions and analytics endpoints, returning 400 on malformed RFC 3339 values.
+- Fix stale "Active 24h" cutoff on the analytics page by computing the timestamp at fetch time.
+- Serialize sync runs with an engine-level mutex to prevent concurrent sync/resync races.
+- Extract shared modal CSS into global styles scoped under `.modal-panel`.
+
+**Bug fixes**
+
+- Fix Gemini sessions showing as "unknown" project by supporting named project directories with worktree resolution.
+- Fix deterministic Gemini project map iteration on duplicate names.
+
+---
+
 ## 0.5.0
 <small>2026-02-25</small>
 
