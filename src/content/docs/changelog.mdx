@@ -3,6 +3,28 @@ title: Changelog
 description: Release history for agentsview
 ---
 
+## 0.6.0
+<small>2026-02-25</small>
+
+**New features**
+
+- Support multiple Claude project directories, including mixed Windows/WSL setups.
+- Add session filters to quickly narrow the session list and analytics views.
+- Add in-app resync so you can refresh data without restarting agentsview.
+- Support theme control via `postMessage` when embedding agentsview in an iframe.
+
+**Improvements**
+
+- Condense watcher warnings to reduce noisy sync notifications.
+- Add a polling fallback for unwatchable directories to keep sync running reliably.
+
+**Bug fixes**
+
+- Fix an app freeze when search returns no results.
+- Fix Gemini project detection so sessions map to the correct project.
+
+---
+
 ## 0.5.0
 <small>2026-02-25</small>
 

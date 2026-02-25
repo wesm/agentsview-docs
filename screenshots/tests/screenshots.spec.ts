@@ -285,6 +285,45 @@ test.describe('Session browser', () => {
       await snap(page, 'session-filtered');
     }
   });
+
+  test('session filter dropdown', async ({ page }) => {
+    const filterBtn = page.locator('button.filter-btn');
+    if (await filterBtn.count() > 0) {
+      await filterBtn.click();
+      await page.waitForTimeout(300);
+      await snap(page, 'session-filters');
+    }
+  });
+
+  test('session filters active', async ({ page }) => {
+    const filterBtn = page.locator('button.filter-btn');
+    if (await filterBtn.count() > 0) {
+      await filterBtn.click();
+      await page.waitForTimeout(300);
+
+      // Enable the "Recently Active" toggle
+      const toggle = page.locator('button.filter-toggle');
+      if (await toggle.count() > 0) {
+        await toggle.click();
+        await page.waitForTimeout(300);
+      }
+
+      // Select an agent filter
+      const agentBtn = page.locator(
+        'button.agent-filter-btn'
+      ).first();
+      if (await agentBtn.count() > 0) {
+        await agentBtn.click();
+        await page.waitForTimeout(300);
+      }
+
+      await snap(page, 'session-filters-active');
+
+      // Clean up
+      const clear = page.locator('button.clear-filters-btn');
+      if (await clear.count() > 0) await clear.click();
+    }
+  });
 });
 
 // ── Message viewer ──────────────────────────────────────
@@ -423,6 +462,19 @@ test.describe('Modals', () => {
     });
     await page.waitForTimeout(300);
     await snap(page, 'shortcuts-modal');
+  });
+
+  test('resync modal', async ({ page }) => {
+    const gear = page.locator('button[title="Full resync"]');
+    if (await gear.count() > 0) {
+      await gear.click();
+      await page.waitForSelector('.resync-panel', {
+        timeout: 5_000,
+      });
+      await page.waitForTimeout(300);
+      await snap(page, 'resync-modal');
+      await page.keyboard.press('Escape');
+    }
   });
 
   test('publish modal', async ({ page }) => {

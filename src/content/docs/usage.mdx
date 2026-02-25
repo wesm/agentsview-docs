@@ -171,16 +171,37 @@ smooth performance even with thousands of sessions.
 Each session item shows:
 
 - **Agent indicator** — color-coded dot (green for Codex, blue
-  for others)
+  for others). Recently active sessions show a glowing animation.
 - **Session name** — first message text, truncated to 50
   characters
 - **Project name** — abbreviated, right-aligned
 - **Relative time** — "2h ago", "Mon", "Dec 1"
-- **Message count** — shown after a bullet separator
+- **User prompt count** — number of user messages in the session
 
-### Filtering
+### Session Filters
 
-Filter sessions using the project dropdown in the header.
+Click the filter icon next to the session count to open a
+dropdown with three filter categories that can be combined:
+
+![Session filter dropdown](/screenshots/session-filters.png)
+
+- **Recently Active** — toggle to show only sessions updated
+  within the last 24 hours
+- **Agent** — select a single agent (Claude, Copilot, Codex,
+  Gemini, OpenCode) to isolate its sessions. Click again to
+  deselect.
+- **Min Prompts** — filter to sessions with at least 2, 3, 5,
+  or 10 user messages
+
+When any filter is active, a green dot appears on the filter
+button. Click **Clear filters** at the bottom of the dropdown
+to reset all filters at once.
+
+Filter state syncs between the session sidebar and the analytics
+dashboard — applying a filter in one updates the other.
+
+### URL Filters
+
 URL parameters are supported for direct linking:
 
 ```
@@ -188,7 +209,8 @@ URL parameters are supported for direct linking:
 ```
 
 Available URL filters: `project`, `agent`, `date`, `date_from`,
-`date_to`, `min_messages`, `max_messages`.
+`date_to`, `min_messages`, `max_messages`,
+`min_user_messages`, `active_since`.
 
 ### Navigation
 
@@ -389,6 +411,20 @@ persists across sessions.
 
 ![Dark theme](/screenshots/theme-dark.png)
 
+### Iframe Embedding
+
+When embedding agentsview in an iframe, the parent page can
+control the theme via `postMessage`:
+
+```javascript
+iframe.contentWindow.postMessage(
+  { type: "theme:set", theme: "dark" },
+  "*"
+);
+```
+
+Accepted values for `theme` are `"light"` and `"dark"`.
+
 ---
 
 ## Sync
@@ -406,3 +442,23 @@ header shows a spinning animation while syncing.
 
 The status bar also shows a version mismatch warning (red) if
 the frontend and backend versions differ. Click it to reload.
+
+### Full Resync
+
+![Resync modal](/screenshots/resync-modal.png)
+
+Click the **gear icon** in the header to open the Full Resync
+modal. This re-parses all session files from scratch without
+deleting the database — sessions are updated in place. This is
+useful after upgrading agentsview or when sessions appear to be
+parsed incorrectly.
+
+The modal shows live progress as sessions are processed:
+
+1. **Confirm** — describes what the resync does, with Start and
+   Cancel buttons
+2. **Progress** — live counter and progress bar ("Syncing X / Y
+   sessions..."). The modal stays open until the resync finishes.
+3. **Done** — shows synced, skipped, and total session counts
+4. **Error** — if the resync fails, shows the error with Retry
+   and Close buttons
