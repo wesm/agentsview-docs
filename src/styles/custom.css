@@ -444,12 +444,14 @@ video {
 
 /* Agent support matrix on hero */
 .agent-matrix {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem 0.75rem;
-  padding: 0.5rem 0.25rem;
-  margin: 0 auto 0;
-  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+  margin: 0 auto;
+  max-width: 650px;
+  flex-wrap: wrap;
 }
 
 .agent-matrix + h2 {
@@ -457,9 +459,7 @@ video {
 }
 
 .agent-matrix img {
-  display: block;
-  margin: 0 auto;
-  height: 28px;
+  height: 22px;
   width: auto;
   opacity: 0.7;
   transition: opacity 0.2s ease;
@@ -471,30 +471,28 @@ video {
 }
 
 .agent-matrix img[data-agent="codex"] {
-  height: 65px;
+  height: 52px;
 }
 
 .agent-matrix img[data-agent="gemini"] {
-  height: 34px;
+  height: 28px;
 }
 
 @media (max-width: 50rem) {
   .agent-matrix {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem 1.5rem;
-    padding: 1rem 0.5rem;
+    gap: 1rem 1.25rem;
   }
 
   .agent-matrix img {
-    height: 20px;
+    height: 18px;
   }
 
   .agent-matrix img[data-agent="codex"] {
-    height: 50px;
+    height: 42px;
   }
 
   .agent-matrix img[data-agent="gemini"] {
-    height: 24px;
+    height: 22px;
   }
 }
 
