@@ -48,7 +48,6 @@ echo "Assembling build context..."
 
 # Copy agentsview source (exclude heavy/unnecessary dirs)
 rsync -a \
-  --exclude='.git' \
   --exclude='node_modules' \
   --exclude='.cache' \
   --exclude='/agentsview' \

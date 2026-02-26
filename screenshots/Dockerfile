@@ -9,14 +9,10 @@ RUN apt-get update && \
 WORKDIR /src
 COPY agentsview/ .
 
-# Build frontend
-RUN cd frontend && npm ci && npm run build
-RUN cp -r frontend/dist internal/web/dist
-
-# Build Go binary with FTS5 support
-RUN CGO_ENABLED=1 go build -tags fts5 \
-    -ldflags="-X main.version=docs -X main.commit=docs" \
-    -o /bin/agentsview ./cmd/agentsview
+# Build frontend and Go binary via Makefile
+RUN cd frontend && npm ci
+RUN make build
+RUN cp agentsview /bin/agentsview
 
 # Stage 2: Extract test database (open-source projects only)
 FROM debian:bookworm-slim AS db
