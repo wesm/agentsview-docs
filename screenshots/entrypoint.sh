@@ -32,6 +32,10 @@ for i in $(seq 1 30); do
   sleep 1
 done
 
+# Prune one-shot sessions to reduce noise in screenshots
+echo "Pruning one-shot sessions..."
+AGENT_VIEWER_DATA_DIR="$DATA_DIR" agentsview prune -max-messages 1 -yes
+
 echo ""
 echo "Capturing screenshots..."
 SCREENSHOT_DIR=/output npx playwright test --reporter=list 2>&1

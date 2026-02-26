@@ -7,7 +7,7 @@ set -euo pipefail
 SOURCE="/data/source.db"
 OUTPUT="/data/test-sessions.db"
 
-PROJECTS="'roborev','roborev_docs','agent_session_viewer','spicytakes.org'"
+PROJECTS="'roborev','roborev_docs','agentsview'"
 
 echo "Extracting open-source projects from source database..."
 
@@ -70,8 +70,7 @@ One session focused entirely on adding test coverage for the new dedup logic. Ad
 | Project | Sessions | Messages | Tool Calls |
 |---------|----------|----------|------------|
 | roborev | 10 | 198 | 124 |
-| agent_session_viewer | 5 | 72 | 41 |
-| spicytakes.org | 3 | 42 | 22 |
+| agentsview | 5 | 72 | 41 |
 
 ### Patterns
 
