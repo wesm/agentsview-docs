@@ -302,7 +302,9 @@ test.describe('Session browser', () => {
       await page.waitForTimeout(300);
 
       // Enable the "Recently Active" toggle
-      const toggle = page.locator('button.filter-toggle');
+      const toggle = page.getByRole('button', {
+        name: 'Recently Active',
+      });
       if (await toggle.count() > 0) {
         await toggle.click();
         await page.waitForTimeout(300);
