@@ -35,9 +35,30 @@ includes a dedicated parser for each:
 
 Parsers extract a common structure:
 
-- **Sessions** — ID, project, agent type, timestamps
+- **Sessions** — ID, project, agent type, timestamps,
+  relationship type
 - **Messages** — role (user/assistant), content, ordinal
-- **Tool calls** — raw tool name plus a normalized category
+- **Tool calls** — raw tool name, normalized category, optional
+  subagent session link
+
+### Fork Detection
+
+The Claude parser builds a DAG from `uuid` / `parentUuid`
+fields present in every JSONL entry. At fork points (nodes
+with multiple children), the parser counts remaining user
+turns on the first branch. Forks with more than 3 user turns
+are split into separate session records with
+`relationship_type = "fork"`. Smaller retries fold into the
+main session by following the latest child.
+
+### Subagent Linking
+
+When Claude Code spawns a Task subagent, it writes a
+`queue-operation` entry mapping `tool_use_id` to `task_id`.
+The parser extracts this mapping (from JSON or XML formats)
+and stores the subagent session ID on the corresponding tool
+call record. This links parent tool blocks to their child
+agent conversations.
 
 ### Tool Taxonomy
 
@@ -75,7 +96,7 @@ The database has seven tables:
 
 | Table | Primary Key | Purpose |
 |-------|-------------|---------|
-| `sessions` | `id` (text) | Session metadata and file info |
+| `sessions` | `id` (text) | Session metadata, file info, relationship type |
 | `messages` | `id` (integer) | Message content and metadata |
 | `tool_calls` | `id` (integer) | Tool invocations per message |
 | `insights` | `id` (integer) | AI-generated session analysis |

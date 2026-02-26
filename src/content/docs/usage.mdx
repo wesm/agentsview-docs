@@ -47,9 +47,10 @@ selected date range:
 
 ### Date Range Picker
 
-Quick presets for 7 days, 30 days, 90 days, and 1 year, plus
-custom start/end date inputs. All charts update when the range
-changes.
+Quick presets for 7 days, 30 days, 90 days, 1 year, and All,
+plus custom start/end date inputs. The **All** preset shows
+every session regardless of age. All charts update when the
+range changes.
 
 ![Date range picker](/screenshots/date-range.png)
 
@@ -170,13 +171,27 @@ smooth performance even with thousands of sessions.
 
 Each session item shows:
 
-- **Agent indicator** — color-coded dot (green for Codex, blue
-  for others). Recently active sessions show a glowing animation.
+- **Agent indicator** — color-coded dot and agent name label in
+  the agent's accent color. Recently active sessions show a
+  glowing animation.
 - **Session name** — first message text, truncated to 50
   characters
 - **Project name** — abbreviated, right-aligned
 - **Relative time** — "2h ago", "Mon", "Dec 1"
 - **User prompt count** — number of user messages in the session
+
+### Forks and Subagent Sessions
+
+agentsview automatically detects conversation forks in Claude
+Code sessions — for example, when you use "retry from here" to
+branch a conversation. Large forks (more than 3 user turns)
+appear as separate session entries grouped with their parent.
+Small retries fold into the main session.
+
+Subagent sessions spawned by the Task tool are hidden from the
+top-level session list and are accessible only through their
+parent session's tool blocks (see
+[Subagent Linking](#subagent-linking) below).
 
 ### Session Filters
 
@@ -192,6 +207,8 @@ dropdown with three filter categories that can be combined:
   deselect.
 - **Min Prompts** — filter to sessions with at least 2, 3, 5,
   or 10 user messages
+- **Hide unknown** — toggle to hide sessions whose project
+  could not be determined
 
 When any filter is active, a green dot appears on the filter
 button. Click **Clear filters** at the bottom of the dropdown
@@ -210,7 +227,7 @@ URL parameters are supported for direct linking:
 
 Available URL filters: `project`, `agent`, `date`, `date_from`,
 `date_to`, `min_messages`, `max_messages`,
-`min_user_messages`, `active_since`.
+`min_user_messages`, `active_since`, `exclude_project`.
 
 ### Navigation
 
@@ -258,6 +275,13 @@ extracted from the tool call input. For task management tools
 subject, status, and ID at a glance. Bash tool blocks show
 the full command text, including multi-line commands like
 heredocs that would otherwise be truncated.
+
+### Subagent Linking
+
+When a Task tool block is linked to a subagent session, it
+shows an expandable toggle. Click it to view the subagent's
+full conversation inline without leaving the parent session.
+Messages load on demand when the section is expanded.
 
 ### Tool Call Groups
 
