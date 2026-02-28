@@ -39,13 +39,14 @@ API endpoint `POST /api/v1/config/github`.
 
 ## Session Discovery
 
-agentsview auto-discovers session files from five agent types:
+agentsview auto-discovers session files from six agent types:
 
 | Agent | Default Directory | File Format |
 |-------|-------------------|-------------|
 | Claude Code | `~/.claude/projects/` | JSONL per session |
 | Codex | `~/.codex/sessions/` | JSONL per session |
 | Copilot CLI | `~/.copilot/session-state/` | JSONL per session |
+| Cursor | `~/.cursor/projects/` | JSONL or plain-text transcripts |
 | Gemini CLI | `~/.gemini/` | JSONL in `tmp/` subdirectory |
 | OpenCode | `~/.local/share/opencode/` | SQLite database |
 
