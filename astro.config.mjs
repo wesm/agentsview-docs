@@ -44,7 +44,6 @@ export default defineConfig({
         { label: 'Session Insights', slug: 'insights' },
         { label: 'CLI Reference', slug: 'commands' },
         { label: 'Configuration', slug: 'configuration' },
-        { label: 'Architecture', slug: 'architecture' },
         { label: 'Changelog', slug: 'changelog' },
       ],
     }),
