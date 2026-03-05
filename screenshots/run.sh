@@ -72,11 +72,11 @@ echo ""
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
 
-# Run screenshots
+# Run screenshots (forward extra args to Playwright, e.g. --grep "test name")
 echo "Running screenshot capture..."
 docker run --rm \
   -v "$OUTPUT_DIR:/output" \
-  "$IMAGE_NAME"
+  "$IMAGE_NAME" "$@"
 
 echo ""
 echo "=== Done ==="

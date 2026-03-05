@@ -38,7 +38,7 @@ AGENT_VIEWER_DATA_DIR="$DATA_DIR" agentsview prune -max-messages 1 -yes
 
 echo ""
 echo "Capturing screenshots..."
-SCREENSHOT_DIR=/output npx playwright test --reporter=list 2>&1
+SCREENSHOT_DIR=/output npx playwright test --reporter=list "$@" 2>&1
 EXIT_CODE=$?
 
 # Show results

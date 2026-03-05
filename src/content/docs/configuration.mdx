@@ -32,6 +32,7 @@ on first run. It stores persistent settings that survive restarts.
 |-------|-------------|
 | `cursor_secret` | Auto-generated HMAC key for pagination cursor signing |
 | `github_token` | GitHub personal access token for Gist publishing |
+| `result_content_blocked_categories` | Tool categories whose result content is not stored (default: `["Read", "Glob"]`) |
 
 The `cursor_secret` is generated automatically on first run.
 The `github_token` can be set via the web UI settings or the
@@ -39,7 +40,7 @@ API endpoint `POST /api/v1/config/github`.
 
 ## Session Discovery
 
-agentsview auto-discovers session files from six agent types:
+agentsview auto-discovers session files from nine agent types:
 
 | Agent | Default Directory | File Format |
 |-------|-------------------|-------------|
@@ -49,6 +50,18 @@ agentsview auto-discovers session files from six agent types:
 | Cursor | `~/.cursor/projects/` | JSONL or plain-text transcripts |
 | Gemini CLI | `~/.gemini/` | JSONL in `tmp/` subdirectory |
 | OpenCode | `~/.local/share/opencode/` | SQLite database |
+| Amp | `~/.local/share/amp/threads/` | JSON per thread |
+| VS Code Copilot | (platform-specific, see below) | JSON / JSONL per session |
+| OpenClaw | `~/.openclaw/agents/` | JSONL per session |
+
+**VS Code Copilot default directories** vary by platform:
+
+- **macOS:** `~/Library/Application Support/Code/User/`
+- **Linux:** `~/.config/Code/User/`
+- **Windows:** `%APPDATA%/Code/User/`
+
+Code Insiders and VSCodium variants are also discovered
+automatically.
 
 Override any default with an environment variable (single
 directory):
@@ -57,8 +70,12 @@ directory):
 export CLAUDE_PROJECTS_DIR=~/custom/claude
 export CODEX_SESSIONS_DIR=~/custom/codex
 export COPILOT_DIR=~/custom/copilot
+export CURSOR_PROJECTS_DIR=~/custom/cursor
 export GEMINI_DIR=~/custom/gemini
 export OPENCODE_DIR=~/custom/opencode
+export AMP_DIR=~/custom/amp
+export VSCODE_COPILOT_DIR=~/custom/vscode
+export OPENCLAW_DIR=~/custom/openclaw
 ```
 
 ### Multiple Directories
@@ -80,10 +97,12 @@ running Windows and WSL side by side — add array fields to
 ```
 
 The corresponding fields are `claude_project_dirs`,
-`codex_sessions_dirs`, `copilot_dirs`, `gemini_dirs`, and
-`opencode_dirs`. Each accepts an array of paths. When set,
-these take precedence over the single-directory environment
-variable and the default path.
+`codex_sessions_dirs`, `copilot_dirs`,
+`cursor_project_dirs`, `gemini_dirs`, `opencode_dirs`,
+`amp_dirs`, `vscode_copilot_dirs`, and `openclaw_dirs`.
+Each accepts an array of paths. When set, these take precedence
+over the single-directory environment variable and the default
+path.
 
 All listed directories are discovered, watched, and synced
 independently.

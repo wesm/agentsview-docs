@@ -24,6 +24,9 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <img src="/agents/copilot.svg" alt="Copilot" data-agent="copilot" width="419" height="95" />
   <img src="/agents/cursor.svg" alt="Cursor" data-agent="cursor" width="800" height="190" />
   <img src="/agents/opencode.svg" alt="OpenCode" data-agent="opencode" width="641" height="115" />
+  <img src="/agents/amp.svg" alt="Amp" data-agent="amp" width="400" height="120" />
+  <img src="/agents/vscode-copilot.svg" alt="VS Code Copilot" data-agent="vscode-copilot" width="600" height="120" />
+  <img src="/agents/openclaw.svg" alt="OpenClaw" data-agent="openclaw" width="500" height="120" />
 </div>
 
 ## Quick Start
@@ -51,9 +54,9 @@ agentsview -no-browser  # Start without opening browser
 ## What It Does
 
 agentsview reads the session files that Claude Code, Codex,
-Copilot CLI, Cursor, Gemini CLI, and OpenCode leave on your
-machine and gives you a web interface to work with them. It runs locally —
-nothing leaves your machine.
+Copilot CLI, Cursor, Gemini CLI, OpenCode, Amp, VS Code Copilot,
+and OpenClaw leave on your machine and gives you a web interface
+to work with them. It runs locally — nothing leaves your machine.
 
 <CardGrid stagger>
   <Card title="AI-Powered Insights" icon="star">
@@ -86,8 +89,9 @@ nothing leaves your machine.
   </Card>
   <Card title="Multi-Agent Support" icon="rocket">
     Works with Claude Code, Codex, Copilot CLI, Cursor,
-    Gemini CLI, and OpenCode. Auto-discovers session
-    directories so there's nothing to configure.
+    Gemini CLI, OpenCode, Amp, VS Code Copilot, and
+    OpenClaw. Auto-discovers session directories so
+    there's nothing to configure.
   </Card>
   <Card title="Runs Locally" icon="laptop">
     SQLite database, embedded web frontend, no cloud
