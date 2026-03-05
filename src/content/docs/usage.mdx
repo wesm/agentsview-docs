@@ -178,9 +178,19 @@ Each session item shows:
   glowing animation.
 - **Session name** — first message text, truncated to 50
   characters
+- **Star button** — click the star icon or press `s` to star
+  a session. Starred sessions persist in browser localStorage.
 - **Project name** — abbreviated, right-aligned
 - **Relative time** — "2h ago", "Mon", "Dec 1"
 - **User prompt count** — number of user messages in the session
+
+### Group by Agent
+
+Click the group-by-agent toggle in the sidebar header to
+organize sessions into collapsible sections by agent type.
+Each agent group shows a color-coded dot, agent name, and
+session count. Click an agent header to expand or collapse
+its section. Groups start collapsed when first enabled.
 
 ### Forks and Subagent Sessions
 
@@ -202,11 +212,12 @@ dropdown with three filter categories that can be combined:
 
 ![Session filter dropdown](/screenshots/session-filters.png)
 
+- **Starred** — toggle to show only starred sessions
 - **Recently Active** — toggle to show only sessions updated
   within the last 24 hours
 - **Agent** — select a single agent (Claude, Copilot, Codex,
-  Cursor, Gemini, OpenCode) to isolate its sessions. Click
-  again to deselect.
+  Cursor, Gemini, OpenCode, Amp, VS Code Copilot, OpenClaw)
+  to isolate its sessions. Click again to deselect.
 - **Min Prompts** — filter to sessions with at least 2, 3, 5,
   or 10 user messages
 - **Hide unknown** — toggle to hide sessions whose project
@@ -246,6 +257,17 @@ rendering for large sessions.
 
 ![Message viewer](/screenshots/message-viewer.png)
 
+### Message Layouts
+
+Three layouts control how messages are rendered. Cycle between
+them with the `l` key or the layout button in the header:
+
+| Layout | Description |
+|--------|-------------|
+| Default | Full card layout with colored borders and spacing |
+| Compact | Condensed view with minimal spacing |
+| Stream | Continuous flow optimized for reading |
+
 ### Message Display
 
 Each message has a colored left border indicating role:
@@ -253,15 +275,16 @@ Each message has a colored left border indicating role:
 - **Blue** — user messages
 - **Purple** — assistant messages
 
-The header shows the role label and timestamp. Message content
-renders with full Markdown support: headings, code blocks,
-lists, tables, links, and images.
+The header shows the role label, timestamp, and a **copy
+button** that appears on hover. Click it to copy the full
+message content to the clipboard — a checkmark confirms the
+copy for 1.5 seconds.
 
 ### Thinking Blocks
 
 Assistant thinking blocks appear as collapsible sections with a
-purple left border. Toggle visibility for all thinking blocks
-with the `t` key or the thinking button in the header.
+purple left border. Toggle visibility for thinking blocks using
+the [block-type filter](#block-type-filtering) in the header.
 
 ### Tool Blocks
 
@@ -276,14 +299,22 @@ extracted from the tool call input. For task management tools
 (TaskCreate, TaskUpdate, TaskGet), these tags show the task
 subject, status, and ID at a glance. Bash tool blocks show
 the full command text, including multi-line commands like
-heredocs that would otherwise be truncated.
+heredocs that would otherwise be truncated. Tool result content
+is stored alongside the tool call when available, giving a
+complete view of input and output.
+
+Codex tool calls receive special formatting: bash commands,
+write_stdin operations, and apply_patch calls display with
+structured argument previews and categorized detail labels.
 
 ### Subagent Linking
 
-When a Task tool block is linked to a subagent session, it
-shows an expandable toggle. Click it to view the subagent's
-full conversation inline without leaving the parent session.
-Messages load on demand when the section is expanded.
+When a Task or Agent tool block is linked to a subagent
+session, it shows an expandable toggle. Click it to view the
+subagent's full transcript inline without leaving the parent
+session. Messages load on demand when the section is expanded,
+showing the complete subagent conversation with role labels
+and timestamps.
 
 ### Tool Call Groups
 
@@ -297,6 +328,23 @@ Click to expand individual tool blocks within the group.
 
 Fenced code blocks render with language labels, monospace
 formatting, and horizontal scrolling for long lines.
+
+### Block-Type Filtering
+
+Click the filter icon in the message viewer header to open a
+dropdown that toggles visibility of five content categories:
+
+| Category | What It Controls |
+|----------|-----------------|
+| User | User messages |
+| Assistant | Assistant responses |
+| Thinking | Thinking/reasoning blocks |
+| Tool | Tool call blocks |
+| Code | Code blocks |
+
+All categories are visible by default. When any are hidden,
+a badge on the filter button shows the count of hidden types.
+Click **Show all** to restore visibility.
 
 ### Sorting
 
@@ -416,7 +464,8 @@ Press `?` to see all shortcuts in a modal overlay.
 | `]` | Next session |
 | `[` | Previous session |
 | `o` | Toggle sort order |
-| `t` | Toggle thinking blocks |
+| `l` | Cycle message layout |
+| `s` | Star / unstar current session |
 | `r` | Trigger sync |
 | `e` | Export session |
 | `p` | Publish to Gist |
@@ -474,10 +523,11 @@ the frontend and backend versions differ. Click it to reload.
 ![Resync modal](/screenshots/resync-modal.png)
 
 Click the **gear icon** in the header to open the Full Resync
-modal. This re-parses all session files from scratch without
-deleting the database — sessions are updated in place. This is
-useful after upgrading agentsview or when sessions appear to be
-parsed incorrectly.
+modal. This re-parses all session files from scratch using a
+non-destructive flow — existing session data is preserved and
+orphaned sessions (those no longer present on disk) are carried
+forward. This is useful after upgrading agentsview or when
+sessions appear to be parsed incorrectly.
 
 The modal shows live progress as sessions are processed:
 

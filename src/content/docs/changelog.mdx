@@ -3,6 +3,34 @@ title: Changelog
 description: Release history for agentsview
 ---
 
+## 0.10.0
+<small>2026-03-04</small>
+
+**New features**
+
+- Add Amp, VS Code Copilot, and OpenClaw agent support, including session parsing, filtering, and agent-colored display.
+- Add a Tauri-based desktop app wrapper that runs the web UI in a native window (in development, not yet released).
+- Add session starring with `s` key toggle and a starred-only filter for quick access to important sessions.
+- Add switchable message layouts — Default, Compact, and Stream — cycled with the `l` key.
+- Add collapsible sidebar grouping by agent to organize sessions by tool.
+- Add block-type filtering to toggle visibility of user messages, assistant responses, thinking blocks, tool calls, and code blocks.
+- Add a copy button on message headers to copy message content to the clipboard.
+- Add inline subagent transcript viewing for Task and Agent tool calls, loading the full subagent conversation on demand.
+
+**Improvements**
+
+- Enrich Codex tool call display with structured formatting for bash, write_stdin, and apply_patch calls.
+- Store tool result content alongside tool calls, with configurable category blocklists to control database size.
+- Use a non-destructive database resync flow that preserves existing session data instead of dropping the database.
+- Simplify the message viewer header by removing the dedicated toggle-thinking button (use block-type filtering instead).
+
+**Bug fixes**
+
+- Return an empty array instead of `null` from the sessions API when no sessions match.
+- Fix dashboard date handling in analytics and insights views for consistent date-range filtering.
+
+---
+
 ## 0.9.0
 <small>2026-02-27</small>
 

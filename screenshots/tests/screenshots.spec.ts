@@ -326,6 +326,47 @@ test.describe('Session browser', () => {
       if (await clear.count() > 0) await clear.click();
     }
   });
+
+  test('starred session', async ({ page }) => {
+    // Star the first session using 's' key
+    await selectFirstSession(page);
+    await page.keyboard.press('s');
+    await page.waitForTimeout(500);
+
+    const sidebar = page.locator('.sidebar');
+    if (await sidebar.count() > 0) {
+      await snapEl(sidebar, 'starred-session');
+    }
+
+    // Unstar to clean up
+    await page.keyboard.press('s');
+  });
+
+  test('group by agent', async ({ page }) => {
+    // Find and click the group-by-agent toggle
+    const groupBtn = page.locator(
+      'button[title*="group"], button[title*="Group"]'
+    );
+    if (await groupBtn.count() > 0) {
+      await groupBtn.click();
+      await page.waitForTimeout(500);
+
+      // Expand the first group
+      const groupHeader = page.locator(
+        '.agent-group-header'
+      ).first();
+      if (await groupHeader.count() > 0) {
+        await groupHeader.click();
+        await page.waitForTimeout(300);
+      }
+
+      const sidebar = page.locator('.sidebar');
+      await snapEl(sidebar, 'group-by-agent');
+
+      // Toggle off to clean up
+      await groupBtn.click();
+    }
+  });
 });
 
 // ── Message viewer ──────────────────────────────────────
@@ -414,6 +455,78 @@ test.describe('Message viewer', () => {
           await snapEl(tg, 'tool-groups');
           break;
         }
+      }
+    }
+  });
+
+  test('compact layout', async ({ page }) => {
+    await selectRichSession(page);
+
+    // Press 'l' to cycle to compact layout
+    await page.keyboard.press('l');
+    await page.waitForTimeout(500);
+
+    // Verify we're in compact layout
+    const list = page.locator('.layout-compact');
+    if (await list.count() > 0) {
+      await snap(page, 'layout-compact');
+    }
+
+    // Cycle back to default
+    await page.keyboard.press('l');
+    await page.keyboard.press('l');
+  });
+
+  test('stream layout', async ({ page }) => {
+    await selectRichSession(page);
+
+    // Press 'l' twice to reach stream layout
+    await page.keyboard.press('l');
+    await page.keyboard.press('l');
+    await page.waitForTimeout(500);
+
+    const list = page.locator('.layout-stream');
+    if (await list.count() > 0) {
+      await snap(page, 'layout-stream');
+    }
+
+    // Cycle back to default
+    await page.keyboard.press('l');
+  });
+
+  test('block-type filter dropdown', async ({ page }) => {
+    await selectRichSession(page);
+
+    // Click the block-type filter button
+    const filterBtn = page.locator(
+      'button[title="Filter block types"]'
+    );
+    if (await filterBtn.count() > 0) {
+      await filterBtn.click();
+      await page.waitForTimeout(300);
+
+      const dropdown = page.locator('.block-filter-dropdown');
+      if (await dropdown.count() > 0) {
+        await snapEl(dropdown, 'block-filter');
+      }
+
+      // Close by clicking elsewhere
+      await page.keyboard.press('Escape');
+    }
+  });
+
+  test('copy button on message', async ({ page }) => {
+    await selectRichSession(page);
+
+    // Hover over a message to reveal the copy button
+    const message = page.locator('.message').first();
+    if (await message.count() > 0) {
+      await message.hover();
+      await page.waitForTimeout(300);
+
+      const copyBtn = message.locator('.copy-btn');
+      if (await copyBtn.count() > 0) {
+        await snapEl(message, 'message-copy-btn');
       }
     }
   });
