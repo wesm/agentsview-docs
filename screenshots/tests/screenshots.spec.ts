@@ -301,12 +301,13 @@ test.describe('Session browser', () => {
       await filterBtn.click();
       await page.waitForTimeout(300);
 
-      // Enable the "Recently Active" toggle
-      const toggle = page.getByRole('button', {
-        name: 'Recently Active',
+      // Select "Min Prompts 10" filter
+      const minPrompts = page.getByRole('button', {
+        name: '10',
+        exact: true,
       });
-      if (await toggle.count() > 0) {
-        await toggle.click();
+      if (await minPrompts.count() > 0) {
+        await minPrompts.click();
         await page.waitForTimeout(300);
       }
 
